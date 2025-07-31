@@ -15,7 +15,7 @@
         }
         
         body {
-            font-family: Gentleman, Helvetica, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #052742 0%, #213d5a 50%, #304256 100%);
             min-height: 100vh;
             padding: 20px;
@@ -58,8 +58,7 @@
         }
         
         .header h1 {
-            font-family: Optima, Georgia, serif;
-            font-size: 2.8em;
+            font-size: clamp(2rem, 5vw, 2.8rem);
             margin-bottom: 15px;
             font-weight: 400;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
@@ -69,8 +68,7 @@
         }
         
         .header p {
-            font-family: Gentleman, Helvetica, sans-serif;
-            font-size: 1.2em;
+            font-size: clamp(1rem, 2vw, 1.2rem);
             opacity: 0.95;
             position: relative;
             z-index: 1;
@@ -111,7 +109,6 @@
             font-size: 16px;
             transition: all 0.3s ease;
             background: white;
-            font-family: Gentleman, Helvetica, sans-serif;
         }
         
         select:focus, input[type="number"]:focus {
@@ -122,7 +119,7 @@
         
         .price-inputs {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 18px;
         }
         
@@ -150,7 +147,7 @@
         
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
             gap: 25px;
             margin-top: 25px;
             position: relative;
@@ -159,11 +156,12 @@
         
         .result-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.1) 100%);
-            padding: 25px;
+            padding: 25px 20px;
             border-radius: 12px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
             transition: transform 0.3s ease;
+            text-align: center;
         }
         
         .result-card:hover {
@@ -172,22 +170,21 @@
         }
         
         .result-label {
-            font-size: 0.9em;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
             opacity: 0.9;
             margin-bottom: 10px;
             font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
         
         .result-value {
-            font-family: Optima, Georgia, serif;
-            font-size: 1.9em;
+            font-size: clamp(1.5rem, 4vw, 2rem);
             font-weight: 600;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             letter-spacing: -0.5px;
-            word-break: break-all;
-            min-height: 1.2em;
+            white-space: nowrap;
         }
         
         .projection-section {
@@ -201,14 +198,14 @@
         
         .projection-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
             gap: 25px;
             margin-top: 25px;
         }
         
         .projection-card {
             text-align: center;
-            padding: 30px 20px;
+            padding: 30px 15px;
             background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
             border-radius: 12px;
             border: 2px solid #f0f0f0;
@@ -223,20 +220,18 @@
         }
         
         .projection-card .value {
-            font-family: Optima, Georgia, serif;
-            font-size: 2.2em;
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
             font-weight: 600;
             background: linear-gradient(135deg, #c18a2f, #dfa449);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 12px 0;
             letter-spacing: -0.5px;
-            word-break: break-all;
-            min-height: 1.2em;
+            white-space: nowrap;
         }
         
         .projection-card .label {
-            font-size: 0.9em;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
             color: #666;
             font-weight: 400;
             text-transform: uppercase;
@@ -245,14 +240,15 @@
         
         .roi-indicator {
             display: inline-block;
-            padding: 8px 20px;
+            padding: 8px 16px;
             border-radius: 25px;
-            font-size: 0.85em;
+            font-size: clamp(0.7rem, 1.2vw, 0.85rem);
             font-weight: 500;
             margin-top: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
         
         .roi-excellent {
@@ -274,10 +270,9 @@
         }
         
         h2 {
-            font-family: Optima, Georgia, serif;
             color: #052742;
             margin-bottom: 25px;
-            font-size: 1.8em;
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
             font-weight: 400;
             display: flex;
             align-items: center;
@@ -317,7 +312,7 @@
         
         .benchmark-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
             gap: 25px;
             margin-top: 25px;
         }
@@ -331,8 +326,7 @@
         }
         
         .benchmark-value {
-            font-family: Optima, Georgia, serif;
-            font-size: 2.8em;
+            font-size: clamp(2rem, 5vw, 3rem);
             font-weight: 600;
             color: #dfa449;
             margin: 10px 0;
@@ -340,7 +334,7 @@
         }
         
         .benchmark-label {
-            font-size: 0.9em;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
             opacity: 0.9;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -395,6 +389,31 @@
             border: 1px solid rgba(223, 164, 73, 0.3);
         }
         
+        /* PDF Specific Styles */
+        .pdf-export {
+            background: white !important;
+            color: #333 !important;
+            padding: 40px !important;
+            font-family: Arial, sans-serif !important;
+        }
+        
+        .pdf-export .header {
+            background: #d8252a !important;
+            padding: 30px !important;
+            margin-bottom: 30px !important;
+        }
+        
+        .pdf-export .results-section,
+        .pdf-export .benchmark-section {
+            page-break-inside: avoid;
+            margin-bottom: 30px !important;
+            padding: 25px !important;
+        }
+        
+        .pdf-export .chart-container {
+            page-break-inside: avoid;
+        }
+        
         @media (max-width: 768px) {
             .price-inputs {
                 grid-template-columns: 1fr;
@@ -404,19 +423,13 @@
                 padding: 25px;
             }
             
-            .header h1 {
-                font-size: 2.2em;
-            }
-            
             .brand-badge {
                 display: none;
             }
             
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .projection-grid {
+            .results-grid,
+            .projection-grid,
+            .benchmark-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -512,10 +525,10 @@
                         <div class="result-value" id="breakEven">0</div>
                     </div>
                     <div class="result-card">
-                        <div class="result-label">ROI on 1st Additional Client</div>
+                        <div class="result-label">ROI on 1st Client</div>
                         <div class="result-value" id="firstClientROI">0%</div>
                     </div>
-                    <div class="result-card">
+                    <div class="result-card" style="display: none;">
                         <div class="result-label">Value Per Client</div>
                         <div class="result-value" id="clientValue">$0</div>
                     </div>
@@ -786,13 +799,14 @@
             document.getElementById('totalCost').textContent = formatCurrency(totalCost);
             document.getElementById('breakEven').textContent = clientsToBreakEven;
             
-            // Handle ROI on first client - show alternative messaging if negative
+            // Handle ROI on first client
+            const firstClientCard = document.querySelector('#firstClientROI').parentElement;
             if (firstClientROI < 0) {
-                document.getElementById('firstClientROI').textContent = 'Builds Brand Equity';
-                document.querySelector('#firstClientROI').parentElement.querySelector('.result-label').textContent = 'Investment Focus';
+                document.getElementById('firstClientROI').textContent = 'Brand Equity';
+                firstClientCard.querySelector('.result-label').textContent = 'Investment Focus';
             } else {
                 document.getElementById('firstClientROI').textContent = formatPercent(firstClientROI);
-                document.querySelector('#firstClientROI').parentElement.querySelector('.result-label').textContent = 'ROI on 1st Additional Client';
+                firstClientCard.querySelector('.result-label').textContent = 'ROI on 1st Client';
             }
             
             // Show client value for high break-even scenarios
@@ -829,13 +843,13 @@
             // Revenue indicator with positive framing
             if (breakEven <= 1) {
                 revenueIndicator.classList.add('roi-excellent');
-                revenueIndicator.textContent = 'Profitable on Client #1';
+                revenueIndicator.textContent = 'Profitable Immediately';
             } else if (breakEven <= 2) {
                 revenueIndicator.classList.add('roi-good');
-                revenueIndicator.textContent = 'Break even on Client #2';
+                revenueIndicator.textContent = 'Quick ROI';
             } else {
                 revenueIndicator.classList.add('roi-building');
-                revenueIndicator.textContent = 'Building Long-term Value';
+                revenueIndicator.textContent = 'Long-term Value';
             }
             
             // ROI indicator with positive messaging
@@ -850,7 +864,7 @@
                 roiIndicator.textContent = 'Positive Growth';
             } else {
                 roiIndicator.classList.add('roi-building');
-                roiIndicator.textContent = 'Strategic Investment';
+                roiIndicator.textContent = 'Strategic Play';
             }
         }
 
@@ -975,29 +989,59 @@
 
         async function exportToPDF() {
             const element = document.getElementById('calculator-content');
+            
+            // Add PDF class for styling
+            element.classList.add('pdf-export');
+            
+            // Create simplified version for PDF
             const canvas = await html2canvas(element, {
-                scale: 2,
-                logging: false
+                scale: 1.5,
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                windowWidth: 800,
+                windowHeight: element.scrollHeight
             });
+            
+            // Remove PDF class
+            element.classList.remove('pdf-export');
             
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
             
-            const imgWidth = 210;
-            const pageHeight = 295;
+            // Add header
+            pdf.setFillColor(216, 37, 42);
+            pdf.rect(0, 0, 210, 40, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(24);
+            pdf.text('Best Lawyers ROI Analysis', 105, 20, { align: 'center' });
+            pdf.setFontSize(12);
+            pdf.text(new Date().toLocaleDateString(), 105, 30, { align: 'center' });
+            
+            // Add the image content
+            const imgWidth = 180;
+            const pageHeight = 297;
             const imgHeight = canvas.height * imgWidth / canvas.width;
             let heightLeft = imgHeight;
-            let position = 0;
+            let position = 50;
             
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+            pdf.addImage(imgData, 'PNG', 15, position, imgWidth, imgHeight);
+            heightLeft -= (pageHeight - 60);
             
             while (heightLeft >= 0) {
                 position = heightLeft - imgHeight;
                 pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                pdf.addImage(imgData, 'PNG', 15, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
             }
+            
+            // Add footer to last page
+            const pageCount = pdf.internal.getNumberOfPages();
+            pdf.setPage(pageCount);
+            pdf.setTextColor(100, 100, 100);
+            pdf.setFontSize(10);
+            pdf.text('Generated by Best Lawyers ROI Calculator', 105, 280, { align: 'center' });
             
             pdf.save('Best-Lawyers-ROI-Analysis.pdf');
         }

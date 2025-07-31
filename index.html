@@ -150,7 +150,7 @@
         
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-top: 25px;
             position: relative;
@@ -182,10 +182,12 @@
         
         .result-value {
             font-family: Optima, Georgia, serif;
-            font-size: 2.2em;
+            font-size: 1.9em;
             font-weight: 600;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
+            word-break: break-all;
+            min-height: 1.2em;
         }
         
         .projection-section {
@@ -199,14 +201,14 @@
         
         .projection-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 25px;
             margin-top: 25px;
         }
         
         .projection-card {
             text-align: center;
-            padding: 30px;
+            padding: 30px 20px;
             background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
             border-radius: 12px;
             border: 2px solid #f0f0f0;
@@ -222,13 +224,15 @@
         
         .projection-card .value {
             font-family: Optima, Georgia, serif;
-            font-size: 2.4em;
+            font-size: 2.2em;
             font-weight: 600;
             background: linear-gradient(135deg, #c18a2f, #dfa449);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 12px 0;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
+            word-break: break-all;
+            min-height: 1.2em;
         }
         
         .projection-card .label {
@@ -328,11 +332,11 @@
         
         .benchmark-value {
             font-family: Optima, Georgia, serif;
-            font-size: 3em;
+            font-size: 2.8em;
             font-weight: 600;
             color: #dfa449;
             margin: 10px 0;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
         }
         
         .benchmark-label {
@@ -407,6 +411,14 @@
             .brand-badge {
                 display: none;
             }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .projection-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         /* Animation for value changes */
@@ -450,9 +462,20 @@
                         <option value="family">Family Law</option>
                         <option value="bankruptcy">Bankruptcy</option>
                         <option value="estate">Estate Planning</option>
-                        <option value="insurance">Insurance Litigation</option>
+                        <option value="business">Business/Corporate Law</option>
+                        <option value="real_estate">Real Estate Law</option>
+                        <option value="employment">Employment Law</option>
+                        <option value="intellectual_property">Intellectual Property</option>
+                        <option value="immigration">Immigration Law</option>
+                        <option value="insurance">Insurance Defense</option>
+                        <option value="workers_comp">Workers' Compensation</option>
                         <option value="litigation">General Litigation</option>
                         <option value="tax">Tax Law</option>
+                        <option value="environmental">Environmental Law</option>
+                        <option value="healthcare">Healthcare Law</option>
+                        <option value="construction">Construction Law</option>
+                        <option value="elder">Elder Law</option>
+                        <option value="education">Education Law</option>
                         <option value="general">General Practice</option>
                     </select>
                 </div>
@@ -594,12 +617,54 @@
                 avgROI: 3.5,
                 name: 'Estate Planning'
             },
+            business: {
+                avgCaseValue: 25000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 2500,
+                avgROI: 3.2,
+                name: 'Business/Corporate Law'
+            },
+            real_estate: {
+                avgCaseValue: 15000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 1200,
+                avgROI: 3.0,
+                name: 'Real Estate Law'
+            },
+            employment: {
+                avgCaseValue: 18000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 1500,
+                avgROI: 2.8,
+                name: 'Employment Law'
+            },
+            intellectual_property: {
+                avgCaseValue: 30000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 3000,
+                avgROI: 3.8,
+                name: 'Intellectual Property'
+            },
+            immigration: {
+                avgCaseValue: 5000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 600,
+                avgROI: 2.2,
+                name: 'Immigration Law'
+            },
             insurance: {
                 avgCaseValue: 12000,
                 attorneyFeePercent: 1.0,
                 costPerCase: 850,
                 avgROI: 3.0,
-                name: 'Insurance Litigation'
+                name: 'Insurance Defense'
+            },
+            workers_comp: {
+                avgCaseValue: 8500,
+                attorneyFeePercent: 1.0,
+                costPerCase: 700,
+                avgROI: 2.4,
+                name: 'Workers\' Compensation'
             },
             litigation: {
                 avgCaseValue: 20000,
@@ -614,6 +679,41 @@
                 costPerCase: 850,
                 avgROI: 3.2,
                 name: 'Tax Law'
+            },
+            environmental: {
+                avgCaseValue: 22000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 2000,
+                avgROI: 3.0,
+                name: 'Environmental Law'
+            },
+            healthcare: {
+                avgCaseValue: 28000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 2200,
+                avgROI: 3.5,
+                name: 'Healthcare Law'
+            },
+            construction: {
+                avgCaseValue: 35000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 2800,
+                avgROI: 3.3,
+                name: 'Construction Law'
+            },
+            elder: {
+                avgCaseValue: 7500,
+                attorneyFeePercent: 1.0,
+                costPerCase: 600,
+                avgROI: 2.6,
+                name: 'Elder Law'
+            },
+            education: {
+                avgCaseValue: 9000,
+                attorneyFeePercent: 1.0,
+                costPerCase: 800,
+                avgROI: 2.3,
+                name: 'Education Law'
             },
             general: {
                 avgCaseValue: 7000,

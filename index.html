@@ -6,6 +6,7 @@
     <title>Best Lawyers ROI Calculator - Transform Your Practice</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -102,7 +103,7 @@
             letter-spacing: 0.5px;
         }
         
-        select, input[type="number"] {
+        select, input[type="number"], input[type="url"] {
             width: 100%;
             padding: 14px 18px;
             border: 2px solid #e0e0e0;
@@ -113,7 +114,7 @@
             font-family: Gentleman, Helvetica, sans-serif;
         }
         
-        select:focus, input[type="number"]:focus {
+        select:focus, input[type="number"]:focus, input[type="url"]:focus {
             outline: none;
             border-color: #c18a2f;
             box-shadow: 0 0 0 3px rgba(223, 164, 73, 0.2);
@@ -388,11 +389,68 @@
             background: rgba(223, 164, 73, 0.2);
             padding: 10px 20px;
             border-radius: 25px;
+            font-family: Optima, Georgia, serif;
             font-size: 0.85em;
             font-weight: 500;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             border: 1px solid rgba(223, 164, 73, 0.3);
+        }
+        
+        .insights-section {
+            background: linear-gradient(135deg, #052742 0%, #213d5a 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 30px rgba(5, 39, 66, 0.3);
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .insight-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(223, 164, 73, 0.3);
+        }
+        
+        .insight-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #dfa449;
+        }
+        
+        .insight-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #dfa449;
+        }
+        
+        .insight-description {
+            font-size: 0.95em;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .statistic {
+            font-size: 2em;
+            font-weight: 700;
+            color: #dfa449;
+            margin: 10px 0;
+        }
+        
+        .source {
+            font-size: 0.8em;
+            opacity: 0.7;
+            font-style: italic;
+            margin-top: 5px;
         }
         
         /* PDF Specific Styles */
@@ -517,9 +575,13 @@
                         <input type="number" id="year3" placeholder="Year 3 Price" min="0" step="100">
                     </div>
                 </div>
+                
+                <div class="form-group">
+                    <label for="website">Firm Website (Optional)</label>
+                    <input type="url" id="website" placeholder="https://www.yourfirm.com">
+                </div>
             </div>
-            <div class="page-break"></div>
-
+            
             <div class="results-section">
                 <h2>Investment Analysis</h2>
                 <div class="results-grid">
@@ -541,8 +603,67 @@
                     </div>
                 </div>
             </div>
-            <div class="page-break"></div>
-
+            
+            <div class="insights-section">
+                <h2>💡 Industry Insights & Value Propositions</h2>
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">📊</div>
+                        <div class="insight-title">Search Behavior</div>
+                        <div class="statistic">96%</div>
+                        <div class="insight-description">
+                            of people seeking legal advice use a search engine as their first step
+                        </div>
+                        <div class="source">Source: American Bar Association</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">🌐</div>
+                        <div class="insight-title">Domain Authority Impact</div>
+                        <div class="statistic">81 vs 30</div>
+                        <div class="insight-description">
+                            Best Lawyers domain authority compared to average law firm website
+                        </div>
+                        <div class="source">Backlinks: 916,000+</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">⭐</div>
+                        <div class="insight-title">Trust & Reviews</div>
+                        <div class="statistic">80%</div>
+                        <div class="insight-description">
+                            of consumers trust online directories as much as personal referrals
+                        </div>
+                        <div class="source">Source: Nielsen Research</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">📱</div>
+                        <div class="insight-title">Mobile First</div>
+                        <div class="statistic">76%</div>
+                        <div class="insight-description">
+                            of people who search locally on smartphones visit a business within 24 hours
+                        </div>
+                        <div class="source">Source: Think with Google</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">🎯</div>
+                        <div class="insight-title">Third-Party Credibility</div>
+                        <div class="statistic">65%</div>
+                        <div class="insight-description">
+                            give more credence to third-party content than firm's own website
+                        </div>
+                        <div class="source">Source: Demand Gen Report</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">🚀</div>
+                        <div class="insight-title">Competitive Edge</div>
+                        <div class="statistic">50%+</div>
+                        <div class="insight-description">
+                            of law firms have no marketing budget - your opportunity to stand out
+                        </div>
+                        <div class="source">Source: ABA TechReport</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="benchmark-section" id="benchmarkSection" style="display: none;">
                 <h2>🏆 Performance Benchmarks</h2>
                 <div class="benchmark-grid">
@@ -563,14 +684,12 @@
                     </div>
                 </div>
             </div>
-            <div class="page-break"></div>
-
+            
             <div class="chart-container" id="chartContainer" style="display: none;">
                 <h2>📈 ROI Timeline Visualization</h2>
                 <canvas id="roiChart"></canvas>
             </div>
-            <div class="page-break"></div>
-
+            
             <div class="projection-section">
                 <h2>5-Year Growth Projections</h2>
                 <div class="info-box">
@@ -997,6 +1116,65 @@
             document.getElementById('chartContainer').style.display = 'none';
         }
 
+        async function exportToPDF() {
+            const element = document.getElementById('calculator-content');
+            
+            // Add PDF class for styling
+            element.classList.add('pdf-export');
+            
+            // Create simplified version for PDF
+            const canvas = await html2canvas(element, {
+                scale: 1.5,
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                windowWidth: 800,
+                windowHeight: element.scrollHeight
+            });
+            
+            // Remove PDF class
+            element.classList.remove('pdf-export');
+            
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+            
+            // Add header
+            pdf.setFillColor(216, 37, 42);
+            pdf.rect(0, 0, 210, 40, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(24);
+            pdf.text('Best Lawyers ROI Analysis', 105, 20, { align: 'center' });
+            pdf.setFontSize(12);
+            pdf.text(new Date().toLocaleDateString(), 105, 30, { align: 'center' });
+            
+            // Add the image content
+            const imgWidth = 180;
+            const pageHeight = 297;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 50;
+            
+            pdf.addImage(imgData, 'PNG', 15, position, imgWidth, imgHeight);
+            heightLeft -= (pageHeight - 60);
+            
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 15, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
+            // Add footer to last page
+            const pageCount = pdf.internal.getNumberOfPages();
+            pdf.setPage(pageCount);
+            pdf.setTextColor(100, 100, 100);
+            pdf.setFontSize(10);
+            pdf.text('Generated by Best Lawyers ROI Calculator', 105, 280, { align: 'center' });
+            
+            pdf.save('Best-Lawyers-ROI-Analysis.pdf');
+        }
+
         // Add event listeners
         document.getElementById('practice').addEventListener('change', calculateROI);
         document.getElementById('firmSize').addEventListener('change', calculateROI);
@@ -1007,6 +1185,5 @@
         // Initial calculation
         calculateROI();
     </script>
-    <script src="pdf-export.js"></script>
 </body>
 </html>

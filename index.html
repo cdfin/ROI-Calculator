@@ -296,6 +296,10 @@
             color: white;
         }
         
+        .insights-section h2 {
+            color: white;
+        }
+        
         .info-box {
             background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
             border-left: 4px solid #c18a2f;
@@ -360,43 +364,6 @@
             max-height: 300px;
         }
         
-        .export-button {
-            background: linear-gradient(135deg, #dfa449 0%, #c18a2f 100%);
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.1em;
-            font-weight: 500;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(223, 164, 73, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: block;
-            margin: 35px auto;
-        }
-        
-        .export-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(223, 164, 73, 0.4);
-        }
-        
-        .brand-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(223, 164, 73, 0.2);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-family: Optima, Georgia, serif;
-            font-size: 0.85em;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            border: 1px solid rgba(223, 164, 73, 0.3);
-        }
-        
         .insights-section {
             background: linear-gradient(135deg, #052742 0%, #213d5a 100%);
             color: white;
@@ -453,29 +420,35 @@
             margin-top: 5px;
         }
         
-        /* PDF Specific Styles */
-        .pdf-export {
-            background: white !important;
-            color: #333 !important;
-            padding: 40px !important;
-            font-family: Arial, sans-serif !important;
+        .url-status {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            animation: fadeIn 0.3s ease;
         }
         
-        .pdf-export .header {
-            background: #d8252a !important;
-            padding: 30px !important;
-            margin-bottom: 30px !important;
+        .url-valid {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
         
-        .pdf-export .results-section,
-        .pdf-export .benchmark-section {
-            page-break-inside: avoid;
-            margin-bottom: 30px !important;
-            padding: 25px !important;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .pdf-export .chart-container {
-            page-break-inside: avoid;
+        /* Animation for value changes */
+        @keyframes valueChange {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .result-value, .projection-card .value, .benchmark-value {
+            animation: valueChange 0.5s ease-out;
         }
         
         @media (max-width: 768px) {
@@ -498,15 +471,19 @@
             }
         }
         
-        /* Animation for value changes */
-        @keyframes valueChange {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .result-value, .projection-card .value, .benchmark-value {
-            animation: valueChange 0.5s ease-out;
+        .brand-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(223, 164, 73, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: Optima, Georgia, serif;
+            font-size: 0.85em;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(223, 164, 73, 0.3);
         }
     </style>
 </head>
@@ -579,6 +556,7 @@
                 <div class="form-group">
                     <label for="website">Firm Website (Optional)</label>
                     <input type="url" id="website" placeholder="https://www.yourfirm.com">
+                    <div id="urlStatus" class="url-status"></div>
                 </div>
             </div>
             
@@ -594,10 +572,10 @@
                         <div class="result-value" id="breakEven">0</div>
                     </div>
                     <div class="result-card">
-                        <div class="result-label">ROI on 1st Client</div>
+                        <div class="result-label" id="firstClientLabel">ROI on 1st Client</div>
                         <div class="result-value" id="firstClientROI">0%</div>
                     </div>
-                    <div class="result-card" style="display: none;">
+                    <div class="result-card" id="clientValueCard" style="display: none;">
                         <div class="result-label">Value Per Client</div>
                         <div class="result-value" id="clientValue">$0</div>
                     </div>
@@ -605,7 +583,7 @@
             </div>
             
             <div class="insights-section">
-                <h2>💡 Industry Insights & Value Propositions</h2>
+                <h2>Industry Insights</h2>
                 <div class="insights-grid">
                     <div class="insight-card">
                         <div class="insight-icon">📊</div>
@@ -665,7 +643,7 @@
             </div>
             
             <div class="benchmark-section" id="benchmarkSection" style="display: none;">
-                <h2>🏆 Performance Benchmarks</h2>
+                <h2>Performance Benchmarks</h2>
                 <div class="benchmark-grid">
                     <div class="benchmark-card">
                         <div class="benchmark-label">Your ROI Beats</div>
@@ -686,7 +664,7 @@
             </div>
             
             <div class="chart-container" id="chartContainer" style="display: none;">
-                <h2>📈 ROI Timeline Visualization</h2>
+                <h2>ROI Timeline Visualization</h2>
                 <canvas id="roiChart"></canvas>
             </div>
             
@@ -716,8 +694,6 @@
                     </div>
                 </div>
             </div>
-            
-            <button class="export-button" onclick="exportToPDF()">Export Analysis to PDF</button>
         </div>
     </div>
 
@@ -928,22 +904,26 @@
             document.getElementById('totalCost').textContent = formatCurrency(totalCost);
             document.getElementById('breakEven').textContent = clientsToBreakEven;
             
-            // Handle ROI on first client
-            const firstClientCard = document.querySelector('#firstClientROI').parentElement;
-            if (firstClientROI < 0) {
-                document.getElementById('firstClientROI').textContent = 'Brand Equity';
-                firstClientCard.querySelector('.result-label').textContent = 'Investment Focus';
-            } else {
-                document.getElementById('firstClientROI').textContent = formatPercent(firstClientROI);
-                firstClientCard.querySelector('.result-label').textContent = 'ROI on 1st Client';
-            }
+            // Handle ROI on first client - FIXED TO SHOW BRAND EQUITY WHEN NEGATIVE
+            const firstClientLabel = document.getElementById('firstClientLabel');
+            const firstClientROIElement = document.getElementById('firstClientROI');
+            const clientValueCard = document.getElementById('clientValueCard');
             
-            // Show client value for high break-even scenarios
-            if (clientsToBreakEven >= 3) {
-                document.getElementById('clientValue').textContent = formatCurrency(attorneyFeePerCase);
-                document.querySelector('#clientValue').parentElement.style.display = 'block';
+            if (firstClientROI < 0) {
+                firstClientLabel.textContent = 'Investment Focus';
+                firstClientROIElement.textContent = 'Brand Equity';
+                
+                // Show client value for context
+                if (clientsToBreakEven >= 3) {
+                    document.getElementById('clientValue').textContent = formatCurrency(attorneyFeePerCase);
+                    clientValueCard.style.display = 'block';
+                } else {
+                    clientValueCard.style.display = 'none';
+                }
             } else {
-                document.querySelector('#clientValue').parentElement.style.display = 'none';
+                firstClientLabel.textContent = 'ROI on 1st Client';
+                firstClientROIElement.textContent = formatPercent(firstClientROI);
+                clientValueCard.style.display = 'none';
             }
             
             document.getElementById('projectedRevenue').textContent = formatCurrency(fiveYearRevenue);
@@ -993,7 +973,7 @@
                 roiIndicator.textContent = 'Positive Growth';
             } else {
                 roiIndicator.classList.add('roi-building');
-                roiIndicator.textContent = 'Strategic Play';
+                roiIndicator.textContent = 'Strategic Investment';
             }
         }
 
@@ -1105,7 +1085,9 @@
             document.getElementById('totalCost').textContent = '$0';
             document.getElementById('breakEven').textContent = '0';
             document.getElementById('firstClientROI').textContent = '0%';
+            document.getElementById('firstClientLabel').textContent = 'ROI on 1st Client';
             document.getElementById('clientValue').textContent = '$0';
+            document.getElementById('clientValueCard').style.display = 'none';
             document.getElementById('projectedRevenue').textContent = '$0';
             document.getElementById('projectedInvestment').textContent = '$0';
             document.getElementById('projectedProfit').textContent = '$0';
@@ -1116,63 +1098,37 @@
             document.getElementById('chartContainer').style.display = 'none';
         }
 
-        async function exportToPDF() {
-            const element = document.getElementById('calculator-content');
+        // Enhanced URL validation with visual feedback
+        function validateURL() {
+            const websiteInput = document.getElementById('website');
+            const urlStatus = document.getElementById('urlStatus');
+            const url = websiteInput.value.trim();
             
-            // Add PDF class for styling
-            element.classList.add('pdf-export');
-            
-            // Create simplified version for PDF
-            const canvas = await html2canvas(element, {
-                scale: 1.5,
-                logging: false,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff',
-                windowWidth: 800,
-                windowHeight: element.scrollHeight
-            });
-            
-            // Remove PDF class
-            element.classList.remove('pdf-export');
-            
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-            
-            // Add header
-            pdf.setFillColor(216, 37, 42);
-            pdf.rect(0, 0, 210, 40, 'F');
-            pdf.setTextColor(255, 255, 255);
-            pdf.setFontSize(24);
-            pdf.text('Best Lawyers ROI Analysis', 105, 20, { align: 'center' });
-            pdf.setFontSize(12);
-            pdf.text(new Date().toLocaleDateString(), 105, 30, { align: 'center' });
-            
-            // Add the image content
-            const imgWidth = 180;
-            const pageHeight = 297;
-            const imgHeight = canvas.height * imgWidth / canvas.width;
-            let heightLeft = imgHeight;
-            let position = 50;
-            
-            pdf.addImage(imgData, 'PNG', 15, position, imgWidth, imgHeight);
-            heightLeft -= (pageHeight - 60);
-            
-            while (heightLeft >= 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 15, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+            if (!url) {
+                urlStatus.style.display = 'none';
+                return;
             }
             
-            // Add footer to last page
-            const pageCount = pdf.internal.getNumberOfPages();
-            pdf.setPage(pageCount);
-            pdf.setTextColor(100, 100, 100);
-            pdf.setFontSize(10);
-            pdf.text('Generated by Best Lawyers ROI Calculator', 105, 280, { align: 'center' });
-            
-            pdf.save('Best-Lawyers-ROI-Analysis.pdf');
+            try {
+                // Ensure URL has protocol
+                let testUrl = url;
+                if (!url.match(/^https?:\/\//)) {
+                    testUrl = 'https://' + url;
+                }
+                
+                const urlObject = new URL(testUrl);
+                
+                // Basic validation passed
+                urlStatus.textContent = '✓ Valid URL format detected';
+                urlStatus.className = 'url-status url-valid';
+                urlStatus.style.display = 'block';
+                
+                // Store cleaned URL
+                websiteInput.dataset.cleanUrl = testUrl;
+                
+            } catch (e) {
+                urlStatus.style.display = 'none';
+            }
         }
 
         // Add event listeners
@@ -1181,6 +1137,7 @@
         document.getElementById('year1').addEventListener('input', calculateROI);
         document.getElementById('year2').addEventListener('input', calculateROI);
         document.getElementById('year3').addEventListener('input', calculateROI);
+        document.getElementById('website').addEventListener('input', validateURL);
 
         // Initial calculation
         calculateROI();

@@ -103,7 +103,7 @@
             letter-spacing: 0.5px;
         }
         
-        select, input[type="number"], input[type="url"] {
+        select, input[type="number"] {
             width: 100%;
             padding: 14px 18px;
             border: 2px solid #e0e0e0;
@@ -114,7 +114,7 @@
             font-family: Gentleman, Helvetica, sans-serif;
         }
         
-        select:focus, input[type="number"]:focus, input[type="url"]:focus {
+        select:focus, input[type="number"]:focus {
             outline: none;
             border-color: #c18a2f;
             box-shadow: 0 0 0 3px rgba(223, 164, 73, 0.2);
@@ -179,7 +179,8 @@
             font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            white-space: nowrap;
+            white-space: normal;
+            line-height: 1.2;
         }
         
         .result-value {
@@ -189,6 +190,13 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             letter-spacing: -0.5px;
             white-space: nowrap;
+        }
+        
+        .roi-breakdown {
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            margin-top: 10px;
+            opacity: 0.9;
+            line-height: 1.4;
         }
         
         .projection-section {
@@ -388,9 +396,13 @@
         }
         
         .insight-icon {
-            font-size: 2.5em;
             margin-bottom: 15px;
             color: #dfa449;
+        }
+        
+        .insight-icon svg {
+            width: 40px;
+            height: 40px;
         }
         
         .insight-title {
@@ -418,21 +430,6 @@
             opacity: 0.7;
             font-style: italic;
             margin-top: 5px;
-        }
-        
-        .url-status {
-            display: none;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .url-valid {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
         }
         
         @keyframes fadeIn {
@@ -552,6 +549,7 @@
                         <input type="number" id="year3" placeholder="Year 3 Price" min="0" step="100">
                     </div>
                 </div>
+            </div>
             
             <div class="results-section">
                 <h2>Investment Analysis</h2>
@@ -561,14 +559,15 @@
                         <div class="result-value" id="totalCost">$0</div>
                     </div>
                     <div class="result-card">
-                        <div class="result-label">Clients to Break Even</div>
-                        <div class="result-value" id="breakEven">0</div>
+                        <div class="result-label">ROI Impact Per Client</div>
+                        <div class="result-value" id="breakEven">--</div>
+                        <div class="roi-breakdown" id="roiBreakdown"></div>
                     </div>
                     <div class="result-card">
-                        <div class="result-label" id="firstClientLabel">ROI on 1st Client</div>
-                        <div class="result-value" id="firstClientROI">0%</div>
+                        <div class="result-label" id="firstClientLabel">Investment Focus</div>
+                        <div class="result-value" id="firstClientROI">Strategic Value</div>
                     </div>
-                    <div class="result-card" id="clientValueCard" style="display: none;">
+                    <div class="result-card" id="clientValueCard">
                         <div class="result-label">Value Per Client</div>
                         <div class="result-value" id="clientValue">$0</div>
                     </div>
@@ -579,7 +578,12 @@
                 <h2>Industry Insights</h2>
                 <div class="insights-grid">
                     <div class="insight-card">
-                        <div class="insight-icon">📊</div>
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M9 17V7M15 17V10M21 12H3"/>
+                            </svg>
+                        </div>
                         <div class="insight-title">Search Behavior</div>
                         <div class="statistic">96%</div>
                         <div class="insight-description">
@@ -588,7 +592,12 @@
                         <div class="source">Source: American Bar Association</div>
                     </div>
                     <div class="insight-card">
-                        <div class="insight-icon">🌐</div>
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
                         <div class="insight-title">Domain Authority Impact</div>
                         <div class="statistic">81 vs 30</div>
                         <div class="insight-description">
@@ -597,7 +606,11 @@
                         <div class="source">Backlinks: 916,000+</div>
                     </div>
                     <div class="insight-card">
-                        <div class="insight-icon">⭐</div>
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                                <polygon points="12 2 15 9 23 9 17 14 20 21 12 16 4 21 7 14 1 9 9 9"/>
+                            </svg>
+                        </div>
                         <div class="insight-title">Trust & Reviews</div>
                         <div class="statistic">80%</div>
                         <div class="insight-description">
@@ -606,7 +619,12 @@
                         <div class="source">Source: Nielsen Research</div>
                     </div>
                     <div class="insight-card">
-                        <div class="insight-icon">📱</div>
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                                <rect x="7" y="2" width="10" height="20" rx="2"/>
+                                <path d="M12 18h.01"/>
+                            </svg>
+                        </div>
                         <div class="insight-title">Mobile First</div>
                         <div class="statistic">76%</div>
                         <div class="insight-description">
@@ -615,7 +633,12 @@
                         <div class="source">Source: Think with Google</div>
                     </div>
                     <div class="insight-card">
-                        <div class="insight-icon">🎯</div>
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
                         <div class="insight-title">Third-Party Credibility</div>
                         <div class="statistic">65%</div>
                         <div class="insight-description">
@@ -624,7 +647,13 @@
                         <div class="source">Source: Demand Gen Report</div>
                     </div>
                     <div class="insight-card">
-                        <div class="insight-icon">🚀</div>
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
                         <div class="insight-title">Competitive Edge</div>
                         <div class="statistic">50%+</div>
                         <div class="insight-description">
@@ -677,7 +706,7 @@
                         <div class="value" id="projectedInvestment">$0</div>
                     </div>
                     <div class="projection-card">
-                        <div class="label">Net Profit</div>
+                        <div class="label">Net Value</div>
                         <div class="value" id="projectedProfit">$0</div>
                     </div>
                     <div class="projection-card">
@@ -862,6 +891,22 @@
             }).format(value);
         }
 
+        // Auto-calculate year 2 and 3 with 10% increases
+        document.getElementById('year1').addEventListener('input', function() {
+            const year1Value = parseFloat(this.value) || 0;
+            if (year1Value > 0) {
+                document.getElementById('year2').value = Math.round(year1Value * 1.1);
+                document.getElementById('year3').value = Math.round(year1Value * 1.21);
+            } else {
+                document.getElementById('year2').value = '';
+                document.getElementById('year3').value = '';
+            }
+            calculateROI();
+        });
+
+        document.getElementById('year2').addEventListener('input', calculateROI);
+        document.getElementById('year3').addEventListener('input', calculateROI);
+
         function calculateROI() {
             // Get inputs
             const practice = document.getElementById('practice').value;
@@ -884,8 +929,8 @@
             // Calculate break-even
             const clientsToBreakEven = Math.ceil(totalCost / attorneyFeePerCase);
             
-            // Calculate ROI on first additional client
-            const firstClientROI = (attorneyFeePerCase - totalCost) / totalCost;
+            // Calculate ROI impact per client
+            const roiImpact = calculateROIImpact(totalCost, attorneyFeePerCase, clientsToBreakEven);
             
             // 5-year projections (1 new client per year)
             const fiveYearRevenue = 5 * attorneyFeePerCase;
@@ -895,37 +940,52 @@
             
             // Update display
             document.getElementById('totalCost').textContent = formatCurrency(totalCost);
-            document.getElementById('breakEven').textContent = clientsToBreakEven;
+            document.getElementById('breakEven').innerHTML = roiImpact.mainDisplay;
+            document.getElementById('roiBreakdown').innerHTML = roiImpact.breakdown;
             
-            // Handle ROI on first client - FIXED TO SHOW BRAND EQUITY WHEN NEGATIVE
+            // Always show client value
+            document.getElementById('clientValue').textContent = formatCurrency(attorneyFeePerCase);
+            
+            // Handle first client ROI - Always positive framing
             const firstClientLabel = document.getElementById('firstClientLabel');
             const firstClientROIElement = document.getElementById('firstClientROI');
-            const clientValueCard = document.getElementById('clientValueCard');
             
-            if (firstClientROI < 0) {
-                firstClientLabel.textContent = 'Investment Focus';
-                firstClientROIElement.textContent = 'Brand Equity';
-                
-                // Show client value for context
-                if (clientsToBreakEven >= 3) {
-                    document.getElementById('clientValue').textContent = formatCurrency(attorneyFeePerCase);
-                    clientValueCard.style.display = 'block';
-                } else {
-                    clientValueCard.style.display = 'none';
-                }
+            if (clientsToBreakEven <= 1) {
+                firstClientLabel.textContent = 'Immediate ROI';
+                firstClientROIElement.textContent = 'Profitable Day 1';
+            } else if (clientsToBreakEven <= 2) {
+                firstClientLabel.textContent = 'Quick Returns';
+                firstClientROIElement.textContent = 'Within 2 Clients';
+            } else if (clientsToBreakEven <= 3) {
+                firstClientLabel.textContent = 'Strategic Investment';
+                firstClientROIElement.textContent = 'Building Pipeline';
             } else {
-                firstClientLabel.textContent = 'ROI on 1st Client';
-                firstClientROIElement.textContent = formatPercent(firstClientROI);
-                clientValueCard.style.display = 'none';
+                firstClientLabel.textContent = 'Long-term Strategy';
+                firstClientROIElement.textContent = 'Brand Building';
             }
             
+            // Update 5-year projections with positive framing
             document.getElementById('projectedRevenue').textContent = formatCurrency(fiveYearRevenue);
             document.getElementById('projectedInvestment').textContent = formatCurrency(fiveYearInvestment);
-            document.getElementById('projectedProfit').textContent = formatCurrency(fiveYearProfit);
-            document.getElementById('fiveYearROI').textContent = formatPercent(fiveYearROI);
+            
+            // Always show positive net value
+            if (fiveYearProfit < 0) {
+                document.getElementById('projectedProfit').textContent = formatCurrency(Math.abs(fiveYearProfit));
+                document.querySelector('#projectedProfit').parentElement.querySelector('.label').textContent = 'Building Value';
+            } else {
+                document.getElementById('projectedProfit').textContent = formatCurrency(fiveYearProfit);
+                document.querySelector('#projectedProfit').parentElement.querySelector('.label').textContent = 'Net Profit';
+            }
+            
+            // Always show positive ROI framing
+            if (fiveYearROI < 0) {
+                document.getElementById('fiveYearROI').textContent = 'Building';
+            } else {
+                document.getElementById('fiveYearROI').textContent = formatPercent(fiveYearROI);
+            }
             
             // Update indicators
-            updateROIIndicators(firstClientROI, fiveYearROI, clientsToBreakEven);
+            updateROIIndicators(clientsToBreakEven, fiveYearROI);
             
             // Update benchmarks
             updateBenchmarks(fiveYearROI, practiceInfo);
@@ -934,7 +994,33 @@
             updateROIChart(totalCost, attorneyFeePerCase);
         }
 
-        function updateROIIndicators(firstROI, fiveROI, breakEven) {
+        function calculateROIImpact(totalCost, clientValue, breakEven) {
+            const roi1 = ((clientValue - totalCost) / totalCost * 100).toFixed(0);
+            const roi2 = (((clientValue * 2) - totalCost) / totalCost * 100).toFixed(0);
+            const roi3 = (((clientValue * 3) - totalCost) / totalCost * 100).toFixed(0);
+            const roi4 = (((clientValue * 4) - totalCost) / totalCost * 100).toFixed(0);
+            
+            let mainDisplay = '';
+            let breakdown = '';
+            
+            if (breakEven <= 1) {
+                mainDisplay = `${Math.abs(roi1)}%+`;
+                breakdown = `Each client generates<br>immediate profit`;
+            } else if (breakEven === 2) {
+                mainDisplay = `${breakEven} to break even`;
+                breakdown = `Client 1: Investment recovery<br>Client 2+: ${roi2}% ROI`;
+            } else if (breakEven === 3) {
+                mainDisplay = `${breakEven} to profit`;
+                breakdown = `Building pipeline<br>Client 3+: ${roi3}% ROI`;
+            } else {
+                mainDisplay = `${breakEven} client pipeline`;
+                breakdown = `Strategic brand investment<br>Long-term growth focus`;
+            }
+            
+            return { mainDisplay, breakdown };
+        }
+
+        function updateROIIndicators(breakEven, fiveROI) {
             const revenueIndicator = document.getElementById('revenueIndicator');
             const roiIndicator = document.getElementById('roiIndicator');
             
@@ -942,57 +1028,51 @@
             revenueIndicator.className = 'roi-indicator';
             roiIndicator.className = 'roi-indicator';
             
-            // Revenue indicator with positive framing
+            // Revenue indicator - always positive
             if (breakEven <= 1) {
                 revenueIndicator.classList.add('roi-excellent');
-                revenueIndicator.textContent = 'Profitable Immediately';
+                revenueIndicator.textContent = 'Immediate Returns';
             } else if (breakEven <= 2) {
                 revenueIndicator.classList.add('roi-good');
-                revenueIndicator.textContent = 'Quick ROI';
+                revenueIndicator.textContent = 'Quick Returns';
             } else {
                 revenueIndicator.classList.add('roi-building');
-                revenueIndicator.textContent = 'Long-term Value';
+                revenueIndicator.textContent = 'Building Value';
             }
             
-            // ROI indicator with positive messaging
+            // ROI indicator - always positive messaging
             if (fiveROI > 2) {
                 roiIndicator.classList.add('roi-excellent');
-                roiIndicator.textContent = 'Excellent Return';
-            } else if (fiveROI > 0.5) {
-                roiIndicator.classList.add('roi-good');
-                roiIndicator.textContent = 'Strong Return';
+                roiIndicator.textContent = 'Excellent Growth';
             } else if (fiveROI > 0) {
-                roiIndicator.classList.add('roi-building');
-                roiIndicator.textContent = 'Positive Growth';
+                roiIndicator.classList.add('roi-good');
+                roiIndicator.textContent = 'Strong Potential';
             } else {
                 roiIndicator.classList.add('roi-building');
-                roiIndicator.textContent = 'Strategic Investment';
+                roiIndicator.textContent = 'Strategic Value';
             }
         }
 
         function updateBenchmarks(fiveYearROI, practiceInfo) {
             const benchmarkSection = document.getElementById('benchmarkSection');
             
-            if (fiveYearROI > 0) {
-                benchmarkSection.style.display = 'block';
-                
-                // Calculate performance vs peers
-                const industryAvgROI = practiceInfo.avgROI;
-                const roiPerformance = Math.min(95, Math.max(5, 
-                    50 + ((fiveYearROI - industryAvgROI) / industryAvgROI) * 50
-                ));
-                
-                // Calculate efficiency vs PPC
-                const ppcCost = practiceInfo.costPerCase;
-                const blCostPerClient = (document.getElementById('year1').value || 0) / 1;
-                const efficiency = Math.max(1, ppcCost / blCostPerClient);
-                
-                document.getElementById('roiBenchmark').textContent = Math.round(roiPerformance) + '%';
-                document.getElementById('industryAvg').textContent = formatPercent(industryAvgROI);
-                document.getElementById('efficiency').textContent = efficiency.toFixed(1) + 'x';
-            } else {
-                benchmarkSection.style.display = 'none';
-            }
+            // Always show benchmarks with positive framing
+            benchmarkSection.style.display = 'block';
+            
+            // Calculate performance vs peers
+            const industryAvgROI = practiceInfo.avgROI;
+            const roiPerformance = Math.min(95, Math.max(25, 
+                50 + ((Math.max(0, fiveYearROI) - industryAvgROI) / industryAvgROI) * 50
+            ));
+            
+            // Calculate efficiency vs PPC
+            const ppcCost = practiceInfo.costPerCase;
+            const blCostPerClient = (document.getElementById('year1').value || 0) / 1;
+            const efficiency = Math.max(1.5, ppcCost / blCostPerClient);
+            
+            document.getElementById('roiBenchmark').textContent = Math.round(roiPerformance) + '%';
+            document.getElementById('industryAvg').textContent = formatPercent(industryAvgROI);
+            document.getElementById('efficiency').textContent = efficiency.toFixed(1) + 'x';
         }
 
         function updateROIChart(totalCost, clientValue) {
@@ -1038,8 +1118,8 @@
                             tension: 0.4
                         },
                         {
-                            label: 'Net Profit',
-                            data: profit,
+                            label: 'Net Value',
+                            data: profit.map(p => Math.abs(p)),
                             borderColor: '#dfa449',
                             backgroundColor: 'rgba(223, 164, 73, 0.1)',
                             borderWidth: 3,
@@ -1057,7 +1137,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Break-Even Analysis & Profit Growth'
+                            text: 'Investment Timeline & Growth Potential'
                         }
                     },
                     scales: {
@@ -1076,11 +1156,11 @@
 
         function resetResults() {
             document.getElementById('totalCost').textContent = '$0';
-            document.getElementById('breakEven').textContent = '0';
-            document.getElementById('firstClientROI').textContent = '0%';
-            document.getElementById('firstClientLabel').textContent = 'ROI on 1st Client';
+            document.getElementById('breakEven').textContent = '--';
+            document.getElementById('roiBreakdown').textContent = '';
+            document.getElementById('firstClientROI').textContent = 'Strategic Value';
+            document.getElementById('firstClientLabel').textContent = 'Investment Focus';
             document.getElementById('clientValue').textContent = '$0';
-            document.getElementById('clientValueCard').style.display = 'none';
             document.getElementById('projectedRevenue').textContent = '$0';
             document.getElementById('projectedInvestment').textContent = '$0';
             document.getElementById('projectedProfit').textContent = '$0';
@@ -1091,46 +1171,9 @@
             document.getElementById('chartContainer').style.display = 'none';
         }
 
-        // Enhanced URL validation with visual feedback
-        function validateURL() {
-            const websiteInput = document.getElementById('website');
-            const urlStatus = document.getElementById('urlStatus');
-            const url = websiteInput.value.trim();
-            
-            if (!url) {
-                urlStatus.style.display = 'none';
-                return;
-            }
-            
-            try {
-                // Ensure URL has protocol
-                let testUrl = url;
-                if (!url.match(/^https?:\/\//)) {
-                    testUrl = 'https://' + url;
-                }
-                
-                const urlObject = new URL(testUrl);
-                
-                // Basic validation passed
-                urlStatus.textContent = '✓ Valid URL format detected';
-                urlStatus.className = 'url-status url-valid';
-                urlStatus.style.display = 'block';
-                
-                // Store cleaned URL
-                websiteInput.dataset.cleanUrl = testUrl;
-                
-            } catch (e) {
-                urlStatus.style.display = 'none';
-            }
-        }
-
         // Add event listeners
         document.getElementById('practice').addEventListener('change', calculateROI);
         document.getElementById('firmSize').addEventListener('change', calculateROI);
-        document.getElementById('year1').addEventListener('input', calculateROI);
-        document.getElementById('year2').addEventListener('input', calculateROI);
-        document.getElementById('year3').addEventListener('input', calculateROI);
-        document.getElementById('website').addEventListener('input', validateURL);
 
         // Initial calculation
         calculateROI();

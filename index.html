@@ -1,948 +1,1114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Best Lawyers ROI Calculator - Transform Your Practice</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Gentleman, Helvetica, sans-serif;
-            background: linear-gradient(135deg, #052742 0%, #213d5a 50%, #304256 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #1a1f25;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
-            overflow: hidden;
-            border: 2px solid #dfa449;
-        }
-        .header {
-            background: linear-gradient(135deg, #d8252a 0%, #c7061f 50%, #b2021a 100%);
-            color: white;
-            padding: 50px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 40%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(223, 164, 73, 0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(200%) rotate(45deg); }
-        }
-        .header h1 {
-            font-family: Optima, Georgia, serif;
-            font-size: clamp(2rem, 5vw, 2.8rem);
-            margin-bottom: 15px;
-            font-weight: 400;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 1;
-            letter-spacing: -0.5px;
-        }
-        .header p {
-            font-family: Gentleman, Helvetica, sans-serif;
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            opacity: 0.95;
-            position: relative;
-            z-index: 1;
-        }
-        .calculator-body {
-            padding: 45px;
-        }
-        .input-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 35px;
-            border-radius: 15px;
-            margin-bottom: 35px;
-            border: 1px solid #dfa449;
-            box-shadow: 0 5px 20px rgba(223, 164, 73, 0.1);
-        }
-        .form-group {
-            margin-bottom: 28px;
-        }
-        label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 10px;
-            color: #052742;
-            font-size: 0.95em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        select, input[type="number"] {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
-            font-family: Gentleman, Helvetica, sans-serif;
-        }
-        select:focus, input[type="number"]:focus {
-            outline: none;
-            border-color: #c18a2f;
-            box-shadow: 0 0 0 3px rgba(223, 164, 73, 0.2);
-        }
-        .price-inputs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 18px;
-        }
-        .results-section {
-            background: linear-gradient(135deg, #c7061f 0%, #d8252a 100%);
-            color: white;
-            padding: 35px;
-            border-radius: 15px;
-            margin-bottom: 35px;
-            box-shadow: 0 10px 30px rgba(216, 37, 42, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        .results-section::after {
-            content: '';
-            position: absolute;
-            bottom: -20%;
-            left: -10%;
-            width: 30%;
-            height: 140%;
-            background: rgba(223, 164, 73, 0.1);
-            transform: rotate(-35deg);
-        }
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-            gap: 25px;
-            margin-top: 25px;
-            position: relative;
-            z-index: 1;
-        }
-        .result-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.1) 100%);
-            padding: 25px 20px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: transform 0.3s ease;
-            text-align: center;
-        }
-        .result-card:hover {
-            transform: translateY(-3px);
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.15) 100%);
-        }
-        .result-label {
-            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-            opacity: 0.9;
-            margin-bottom: 10px;
-            font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: normal;
-            line-height: 1.2;
-        }
-        .result-value {
-            font-family: Optima, Georgia, serif;
-            font-size: clamp(1.5rem, 4vw, 2rem);
-            font-weight: 600;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            letter-spacing: -0.5px;
-            white-space: nowrap;
-        }
-        .roi-breakdown {
-            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-            margin-top: 10px;
-            opacity: 0.9;
-            line-height: 1.4;
-        }
-        .projection-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 35px;
-            border-radius: 15px;
-            margin-bottom: 35px;
-            border: 1px solid #c18a2f;
-            box-shadow: 0 5px 20px rgba(193, 138, 47, 0.1);
-        }
-        .projection-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-            gap: 25px;
-            margin-top: 25px;
-        }
-        .projection-card {
-            text-align: center;
-            padding: 30px 15px;
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-            border-radius: 12px;
-            border: 2px solid #f0f0f0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
-        .projection-card:hover {
-            transform: translateY(-5px);
-            border-color: #dfa449;
-            box-shadow: 0 8px 25px rgba(223, 164, 73, 0.2);
-        }
-        .projection-card .value {
-            font-family: Optima, Georgia, serif;
-            font-size: clamp(1.8rem, 4vw, 2.4rem);
-            font-weight: 600;
-            background: linear-gradient(135deg, #c18a2f, #dfa449);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 12px 0;
-            letter-spacing: -0.5px;
-            white-space: nowrap;
-        }
-        .projection-card .label {
-            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-            color: #666;
-            font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .roi-indicator {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-size: clamp(0.7rem, 1.2vw, 0.85rem);
-            font-weight: 500;
-            margin-top: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-        .roi-excellent {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-        .roi-good {
-            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
-        }
-        .roi-building {
-            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
-        }
-        h2 {
-            font-family: Optima, Georgia, serif;
-            color: #052742;
-            margin-bottom: 25px;
-            font-size: clamp(1.4rem, 3vw, 1.8rem);
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: -0.5px;
-        }
-        .results-section h2 {
-            color: white;
-            position: relative;
-            z-index: 1;
-        }
-        .benchmark-section h2 {
-            color: white;
-        }
-        .insights-section h2 {
-            color: white !important;
-        }
-        .info-box {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            border-left: 4px solid #c18a2f;
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 0 8px 8px 0;
-            font-size: 0.95em;
-            color: #856404;
-            box-shadow: 0 3px 10px rgba(255, 193, 7, 0.15);
-        }
-        .benchmark-section {
-            background: linear-gradient(135deg, #052742 0%, #213d5a 100%);
-            color: white;
-            padding: 35px;
-            border-radius: 15px;
-            margin-bottom: 35px;
-            box-shadow: 0 10px 30px rgba(5, 39, 66, 0.3);
-        }
-        .benchmark-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-            gap: 25px;
-            margin-top: 25px;
-        }
-        .benchmark-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(223, 164, 73, 0.3);
-        }
-        .benchmark-value {
-            font-family: Optima, Georgia, serif;
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 600;
-            color: #dfa449;
-            margin: 10px 0;
-            letter-spacing: -0.5px;
-        }
-        .benchmark-label {
-            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .chart-container {
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 35px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            border: 1px solid #e0e0e0;
-        }
-        #roiChart {
-            max-height: 300px;
-        }
-        .insights-section {
-            background: linear-gradient(135deg, #052742 0%, #213d5a 100%);
-            color: white;
-            padding: 35px;
-            border-radius: 15px;
-            margin-bottom: 35px;
-            box-shadow: 0 10px 30px rgba(5, 39, 66, 0.3);
-        }
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-            gap: 25px;
-            margin-top: 25px;
-        }
-        .insight-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid rgba(223, 164, 73, 0.3);
-        }
-        .insight-icon {
-            margin-bottom: 15px;
-            color: #dfa449;
-        }
-        .insight-icon svg {
-            width: 40px;
-            height: 40px;
-        }
-        .insight-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #dfa449;
-        }
-        .insight-description {
-            font-size: 0.95em;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-        .statistic {
-            font-size: 2em;
-            font-weight: 700;
-            color: #dfa449;
-            margin: 10px 0;
-        }
-        .source {
-            font-size: 0.8em;
-            opacity: 0.7;
-            font-style: italic;
-            margin-top: 5px;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes valueChange {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .result-value, .projection-card .value, .benchmark-value {
-            animation: valueChange 0.5s ease-out;
-        }
-        @media (max-width: 768px) {
-            .price-inputs {
-                grid-template-columns: 1fr;
-            }
-            .calculator-body {
-                padding: 25px;
-            }
-            .brand-badge {
-                display: none;
-            }
-            .results-grid,
-            .projection-grid,
-            .benchmark-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .brand-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(223, 164, 73, 0.2);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-family: Optima, Georgia, serif;
-            font-size: 0.85em;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            border: 1px solid rgba(223, 164, 73, 0.3);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Best Lawyers ROI Calculator - Transform Your Practice</title>
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* Preserve original styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Gentleman, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #052742 0%, #213d5a 50%, #304256 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #1a1f25;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+      overflow: hidden;
+      border: 2px solid #dfa449;
+    }
+    .header {
+      background: linear-gradient(135deg, #d8252a 0%, #c7061f 50%, #b2021a 100%);
+      color: white;
+      padding: 50px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(223, 164, 73, 0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(200%) rotate(45deg); }
+    }
+    .header h1 {
+      font-family: Optima, Georgia, serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      margin-bottom: 15px;
+      font-weight: 400;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      font-family: Gentleman, Helvetica, sans-serif;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      opacity: 0.95;
+      position: relative;
+      z-index: 1;
+    }
+
+    .calculator-body {
+      padding: 45px;
+    }
+    .input-section {
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      padding: 35px;
+      border-radius: 15px;
+      margin-bottom: 35px;
+      border: 1px solid #dfa449;
+      box-shadow: 0 5px 20px rgba(223, 164, 73, 0.1);
+    }
+    .form-group {
+      margin-bottom: 28px;
+    }
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #052742;
+      font-size: 0.95em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    select, input[type="number"] {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+      font-family: Gentleman, Helvetica, sans-serif;
+    }
+    select:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: #c18a2f;
+      box-shadow: 0 0 0 3px rgba(223, 164, 73, 0.2);
+    }
+    .price-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 18px;
+    }
+
+    .results-section {
+      background: linear-gradient(135deg, #c7061f 0%, #d8252a 100%);
+      color: white;
+      padding: 35px;
+      border-radius: 15px;
+      margin-bottom: 35px;
+      box-shadow: 0 10px 30px rgba(216, 37, 42, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .results-section::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 30%;
+      height: 140%;
+      background: rgba(223, 164, 73, 0.1);
+      transform: rotate(-35deg);
+    }
+    .results-grid {
+      display: grid;
+      /* 2x2 grid for four cards */
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+    @media(max-width: 560px) {
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .result-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.1) 100%);
+      padding: 25px 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: transform 0.3s ease;
+      text-align: center;
+    }
+    .result-card:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.15) 100%);
+    }
+    .result-label {
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+      opacity: 0.9;
+      margin-bottom: 10px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: normal;
+      line-height: 1.2;
+    }
+    .result-value {
+      font-family: Optima, Georgia, serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 600;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .roi-breakdown {
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+      margin-top: 10px;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+
+    .insights-section {
+      background: #052742;
+      color: white;
+      padding: 35px;
+      border-radius: 15px;
+      margin-bottom: 35px;
+      box-shadow: 0 10px 30px rgba(5, 39, 66, 0.3);
+    }
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 25px;
+      margin-top: 25px;
+    }
+    .insight-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(223, 164, 73, 0.3);
+    }
+    .insight-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      margin-bottom: 12px;
+    }
+    .insight-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .statistic {
+      font-size: 2em;
+      font-weight: 700;
+      color: #dfa449;
+      margin-bottom: 8px;
+    }
+    .insight-description {
+      font-size: 0.95em;
+      line-height: 1.4;
+      margin-bottom: 5px;
+    }
+    .source {
+      font-size: 0.85em;
+      opacity: 0.8;
+      margin-top: 8px;
+    }
+
+    .benchmark-section {
+      background: linear-gradient(135deg, #052742 0%, #213d5a 100%);
+      color: white;
+      padding: 35px;
+      border-radius: 15px;
+      margin-bottom: 35px;
+      box-shadow: 0 10px 30px rgba(5, 39, 66, 0.3);
+      display: none; /* hidden until calculateROI triggers it */
+    }
+    .benchmark-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-top: 25px;
+    }
+    @media(max-width: 560px) {
+      .benchmark-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .benchmark-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(223, 164, 73, 0.3);
+    }
+    .benchmark-value {
+      font-family: Optima, Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 600;
+      color: #dfa449;
+      margin: 10px 0;
+      letter-spacing: -0.5px;
+    }
+    .benchmark-label {
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .chart-container {
+      background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 35px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+      display: none; /* shown after calc */
+      overflow: visible;
+    }
+    #roiChart {
+      width: 100%;
+      max-width: 100%;
+      height: 300px;
+    }
+
+    .projection-section {
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      padding: 35px;
+      border-radius: 15px;
+      margin-bottom: 35px;
+      border: 1px solid #c18a2f;
+      box-shadow: 0 5px 20px rgba(193, 138, 47, 0.1);
+    }
+    .projection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-top: 25px;
+    }
+    @media(max-width: 560px) {
+      .projection-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .projection-card {
+      text-align: center;
+      padding: 30px 15px;
+      background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+      border-radius: 12px;
+      border: 2px solid #f0f0f0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    .projection-card:hover {
+      transform: translateY(-5px);
+      border-color: #dfa449;
+      box-shadow: 0 8px 25px rgba(223, 164, 73, 0.2);
+    }
+    .projection-card .value {
+      font-family: Optima, Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 600;
+      background: linear-gradient(135deg, #c18a2f, #dfa449);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 12px 0;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .projection-card .label {
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+      color: #666;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .roi-indicator {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 25px;
+      font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+      font-weight: 500;
+      margin-top: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    .roi-excellent {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+    .roi-good {
+      background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+    }
+    .roi-building {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+    }
+
+    /* Centered Section Titles */
+    .calculator-body h2 {
+      font-family: Optima, Georgia, serif;
+      color: #052742;
+      margin-bottom: 25px;
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: -0.5px;
+      text-align: center;
+    }
+    /* Override colors for h2 in colored sections */
+    .results-section h2,
+    .benchmark-section h2,
+    .insights-section h2 {
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+    .chart-container h2 {
+      text-align: center;
+    }
+    .projection-section h2 {
+      text-align: center;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border-left: 4px solid #c18a2f;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.95em;
+      color: #856404;
+      box-shadow: 0 3px 10px rgba(255, 193, 7, 0.15);
+    }
+
+    /* Button for PDF Export */
+    #downloadPdfBtn {
+      background: #052742;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+    }
+    #downloadPdfBtn:hover {
+      background: #1b4b72;
+    }
+  </style>
 </head>
 <body>
-    <div class="container" id="calculator-content">
-        <div class="header">
-            <span class="brand-badge">Best Lawyers®</span>
-            <h1>ROI Calculator</h1>
-            <p>From Recognition to Results: Transform Your Practice with Best Lawyers</p>
-        </div>
-        <div class="calculator-body">
-            <div class="input-section">
-                <h2>Your Information</h2>
-                <div class="form-group">
-                    <label for="tier">Marketing Tier</label>
-                    <select id="tier">
-                        <option value="visibility">Visibility Package</option>
-                        <option value="business">Business Development Package</option>
-                        <option value="market">Market Leader Package</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="practice">Practice Area</label>
-                    <select id="practice">
-                        <option value="personal_injury">Personal Injury</option>
-                        <option value="criminal">Criminal Defense</option>
-                        <option value="family">Family Law</option>
-                        <option value="bankruptcy">Bankruptcy</option>
-                        <option value="estate">Estate Planning</option>
-                        <option value="business">Business/Corporate Law</option>
-                        <option value="real_estate">Real Estate Law</option>
-                        <option value="employment">Employment Law</option>
-                        <option value="intellectual_property">Intellectual Property</option>
-                        <option value="immigration">Immigration Law</option>
-                        <option value="insurance">Insurance Defense</option>
-                        <option value="workers_comp">Workers' Compensation</option>
-                        <option value="litigation">General Litigation</option>
-                        <option value="tax">Tax Law</option>
-                        <option value="environmental">Environmental Law</option>
-                        <option value="healthcare">Healthcare Law</option>
-                        <option value="construction">Construction Law</option>
-                        <option value="elder">Elder Law</option>
-                        <option value="education">Education Law</option>
-                        <option value="general">General Practice</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="firmSize">Firm Size</label>
-                    <select id="firmSize">
-                        <option value="solo">Solo Practice</option>
-                        <option value="small">Small Firm (2-10 attorneys)</option>
-                        <option value="medium">Medium Firm (11-50 attorneys)</option>
-                        <option value="large">Large Firm (50+ attorneys)</option>
-                    </select>
-                </div>
-                <div class="form-group" style="margin-bottom:12px;">
-                    <label style="display:flex;align-items:center;gap:8px;font-weight:400;">
-                        <input type="checkbox" id="manualClientValueToggle" style="width:18px;height:18px;vertical-align:middle;">
-                        Use Custom Client/Case Value
-                    </label>
-                    <input type="number" id="manualClientValue" placeholder="Enter client/case value" min="1" style="display:none;margin-top:10px;">
-                    <span id="customValueNote" style="display:none;font-size:0.9em;color:#dfa449;">ROI will use your custom value</span>
-                </div>
-                <div class="form-group" style="margin-bottom:14px;">
-                    <label for="domainAuthority" style="font-weight:400;">Firm Website Domain Authority (Optional) <span style="font-size:0.9em;color:#dfa449;" title="Domain Authority (DA) is a score 0-100 indicating your website's search engine strength. Higher is better.">[?]</span></label>
-                    <input type="number" id="domainAuthority" placeholder="e.g., 25" min="1" max="100" style="width:120px;">
-                    <span id="daCompare" style="font-size:0.95em;margin-left:16px;"></span>
-                    <span id="daMessage" style="display:block;font-size:0.95em;color:#d8252a;margin-top:4px;"></span>
-                </div>
-                <div class="form-group">
-                    <label>Annual Pricing</label>
-                    <div class="price-inputs">
-                        <input type="number" id="year1" placeholder="Year 1 Price" min="0" step="100">
-                        <input type="number" id="year2" placeholder="Year 2 Price" min="0" step="100">
-                        <input type="number" id="year3" placeholder="Year 3 Price" min="0" step="100">
-                    </div>
-                </div>
-            </div>
-            <div class="results-section">
-                <h2>Investment Analysis</h2>
-                <div class="results-grid">
-                    <div class="result-card">
-                        <div class="result-label">Total 3-Year Investment</div>
-                        <div class="result-value" id="totalCost">$0</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">ROI Impact Per Client</div>
-                        <div class="result-value" id="breakEven">--</div>
-                        <div class="roi-breakdown" id="roiBreakdown"></div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label" id="firstClientLabel">Investment Focus</div>
-                        <div class="result-value" id="firstClientROI">Strategic Value</div>
-                    </div>
-                    <div class="result-card" id="clientValueCard">
-                        <div class="result-label">Value Per Client</div>
-                        <div class="result-value" id="clientValue">$0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="insights-section">
-                <h2>Industry Insights</h2>
-                <div class="insights-grid">
-                    <div class="insight-card">
-                        <div class="insight-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                <path d="M9 17V7M15 17V10M21 12H3"/>
-                            </svg>
-                        </div>
-                        <div class="insight-title">Search Behavior</div>
-                        <div class="statistic">96%</div>
-                        <div class="insight-description">
-                            of people seeking legal advice use a search engine as their first step
-                        </div>
-                        <div class="source">Source: American Bar Association</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                            </svg>
-                        </div>
-                        <div class="insight-title">Domain Authority Impact</div>
-                        <div class="statistic">81 vs 30</div>
-                        <div class="insight-description">
-                            Best Lawyers domain authority compared to average law firm website
-                        </div>
-                        <div class="source">Backlinks: 916,000+</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
-                                <polygon points="12 2 15 9 23 9 17 14 20 21 12 16 4 21 7 14 1 9 9 9"/>
-                            </svg>
-                        </div>
-                        <div class="insight-title">Trust & Reviews</div>
-                        <div class="statistic">80%</div>
-                        <div class="insight-description">
-                            of consumers trust online directories as much as personal referrals
-                        </div>
-                        <div class="source">Source: Nielsen Research</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
-                                <rect x="7" y="2" width="10" height="20" rx="2"/>
-                                <path d="M12 18h.01"/>
-                            </svg>
-                        </div>
-                        <div class="insight-title">Mobile First</div>
-                        <div class="statistic">76%</div>
-                        <div class="insight-description">
-                            of people who search locally on smartphones visit a business within 24 hours
-                        </div>
-                        <div class="source">Source: Think with Google</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </div>
-                        <div class="insight-title">Third-Party Credibility</div>
-                        <div class="statistic">65%</div>
-                        <div class="insight-description">
-                            give more credence to third-party content than firm's own website
-                        </div>
-                        <div class="source">Source: Demand Gen Report</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                                <line x1="12" y1="22.08" x2="12" y2="12"/>
-                            </svg>
-                        </div>
-                        <div class="insight-title">Competitive Edge</div>
-                        <div class="statistic">50%+</div>
-                        <div class="insight-description">
-                            of law firms have no marketing budget - your opportunity to stand out
-                        </div>
-                        <div class="source">Source: ABA TechReport</div>
-                    </div>
-                </div>
-            </div>
-            <div class="benchmark-section" id="benchmarkSection" style="display: none;">
-                <h2>Performance Benchmarks</h2>
-                <div class="benchmark-grid">
-                    <div class="benchmark-card">
-                        <div class="benchmark-label">Your ROI Beats</div>
-                        <div class="benchmark-value" id="roiBenchmark">0%</div>
-                        <div class="benchmark-label">of Similar Firms</div>
-                    </div>
-                    <div class="benchmark-card">
-                        <div class="benchmark-label">Industry Average ROI</div>
-                        <div class="benchmark-value" id="industryAvg">0%</div>
-                        <div class="benchmark-label">For Your Practice Area</div>
-                    </div>
-                    <div class="benchmark-card">
-                        <div class="benchmark-label">Marketing Efficiency</div>
-                        <div class="benchmark-value" id="efficiency">0x</div>
-                        <div class="benchmark-label">Better Than PPC</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chart-container" id="chartContainer" style="display: none;">
-                <h2>ROI Timeline Visualization</h2>
-                <canvas id="roiChart"></canvas>
-            </div>
-            <div class="projection-section">
-                <h2>3-Year Growth Projections</h2>
-                <div class="info-box">
-                    Based on acquiring just 1 new client per year through Best Lawyers recognition
-                </div>
-                <div class="projection-grid">
-                    <div class="projection-card">
-                        <div class="label">Revenue Generated</div>
-                        <div class="value" id="projectedRevenue3">$0</div>
-                        <div class="roi-indicator" id="revenueIndicator">Calculate to see</div>
-                    </div>
-                    <div class="projection-card">
-                        <div class="label">Total Investment</div>
-                        <div class="value" id="projectedInvestment3">$0</div>
-                    </div>
-                    <div class="projection-card">
-                        <div class="label">Net Value</div>
-                        <div class="value" id="projectedProfit3">$0</div>
-                    </div>
-                    <div class="projection-card">
-                        <div class="label">3-Year ROI</div>
-                        <div class="value" id="threeYearROI">0%</div>
-                        <div class="roi-indicator" id="roiIndicator">Calculate to see</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container" id="calculator-content">
+    <div class="header">
+      <span class="brand-badge">Best Lawyers®</span>
+      <h1>ROI Calculator</h1>
+      <p>From Recognition to Results: Transform Your Practice with Best Lawyers</p>
     </div>
-    <script>
-        // Practice area data with benchmarks
-        const practiceData = {
-            personal_injury: { avgCaseValue: 55056, attorneyFeePercent: 0.33, costPerCase: 2000, avgROI: 2.5, name: 'Personal Injury' },
-            criminal: { avgCaseValue: 8000, attorneyFeePercent: 1.0, costPerCase: 1200, avgROI: 1.8, name: 'Criminal Defense' },
-            family: { avgCaseValue: 6500, attorneyFeePercent: 1.0, costPerCase: 1000, avgROI: 2.0, name: 'Family Law' },
-            bankruptcy: { avgCaseValue: 4000, attorneyFeePercent: 1.0, costPerCase: 800, avgROI: 1.5, name: 'Bankruptcy' },
-            estate: { avgCaseValue: 10000, attorneyFeePercent: 1.0, costPerCase: 900, avgROI: 3.5, name: 'Estate Planning' },
-            business: { avgCaseValue: 25000, attorneyFeePercent: 1.0, costPerCase: 2500, avgROI: 3.2, name: 'Business/Corporate Law' },
-            real_estate: { avgCaseValue: 15000, attorneyFeePercent: 1.0, costPerCase: 1200, avgROI: 3.0, name: 'Real Estate Law' },
-            employment: { avgCaseValue: 18000, attorneyFeePercent: 1.0, costPerCase: 1500, avgROI: 2.8, name: 'Employment Law' },
-            intellectual_property: { avgCaseValue: 30000, attorneyFeePercent: 1.0, costPerCase: 3000, avgROI: 3.8, name: 'Intellectual Property' },
-            immigration: { avgCaseValue: 5000, attorneyFeePercent: 1.0, costPerCase: 600, avgROI: 2.2, name: 'Immigration Law' },
-            insurance: { avgCaseValue: 12000, attorneyFeePercent: 1.0, costPerCase: 850, avgROI: 3.0, name: 'Insurance Defense' },
-            workers_comp: { avgCaseValue: 8500, attorneyFeePercent: 1.0, costPerCase: 700, avgROI: 2.4, name: 'Workers\' Compensation' },
-            litigation: { avgCaseValue: 20000, attorneyFeePercent: 1.0, costPerCase: 1500, avgROI: 2.8, name: 'General Litigation' },
-            tax: { avgCaseValue: 12000, attorneyFeePercent: 1.0, costPerCase: 850, avgROI: 3.2, name: 'Tax Law' },
-            environmental: { avgCaseValue: 22000, attorneyFeePercent: 1.0, costPerCase: 2000, avgROI: 3.0, name: 'Environmental Law' },
-            healthcare: { avgCaseValue: 28000, attorneyFeePercent: 1.0, costPerCase: 2200, avgROI: 3.5, name: 'Healthcare Law' },
-            construction: { avgCaseValue: 35000, attorneyFeePercent: 1.0, costPerCase: 2800, avgROI: 3.3, name: 'Construction Law' },
-            elder: { avgCaseValue: 7500, attorneyFeePercent: 1.0, costPerCase: 600, avgROI: 2.6, name: 'Elder Law' },
-            education: { avgCaseValue: 9000, attorneyFeePercent: 1.0, costPerCase: 800, avgROI: 2.3, name: 'Education Law' },
-            general: { avgCaseValue: 7000, attorneyFeePercent: 1.0, costPerCase: 700, avgROI: 2.2, name: 'General Practice' }
-        };
-        let chartInstance = null;
-        let usingCustomClientValue = false;
-        // Manual Client Value Toggle Logic
-        const manualClientValueToggle = document.getElementById('manualClientValueToggle');
-        const manualClientValueInput = document.getElementById('manualClientValue');
-        const customValueNote = document.getElementById('customValueNote');
-        manualClientValueToggle.addEventListener('change', function() {
-            usingCustomClientValue = this.checked;
-            manualClientValueInput.style.display = this.checked ? 'block' : 'none';
-            customValueNote.style.display = this.checked ? 'inline' : 'none';
-            calculateROI();
+    <div class="calculator-body">
+      <!-- Input Section -->
+      <div class="input-section">
+        <h2>Your Information</h2>
+        <div class="form-group">
+          <label for="tier">Marketing Tier</label>
+          <select id="tier">
+            <option value="visibility">Visibility Package</option>
+            <option value="business">Business Development Package</option>
+            <option value="market">Market Leader Package</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="practice">Practice Area</label>
+          <select id="practice">
+            <option value="personal_injury">Personal Injury</option>
+            <option value="criminal">Criminal Defense</option>
+            <option value="family">Family Law</option>
+            <option value="bankruptcy">Bankruptcy</option>
+            <option value="estate">Estate Planning</option>
+            <option value="business">Business/Corporate Law</option>
+            <option value="real_estate">Real Estate Law</option>
+            <option value="employment">Employment Law</option>
+            <option value="intellectual_property">Intellectual Property</option>
+            <option value="immigration">Immigration Law</option>
+            <option value="insurance">Insurance Defense</option>
+            <option value="workers_comp">Workers' Compensation</option>
+            <option value="litigation">General Litigation</option>
+            <option value="tax">Tax Law</option>
+            <option value="environmental">Environmental Law</option>
+            <option value="healthcare">Healthcare Law</option>
+            <option value="construction">Construction Law</option>
+            <option value="elder">Elder Law</option>
+            <option value="education">Education Law</option>
+            <option value="general">General Practice</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="firmSize">Firm Size</label>
+          <select id="firmSize">
+            <option value="solo">Solo Practice</option>
+            <option value="small">Small Firm (2-10 attorneys)</option>
+            <option value="medium">Medium Firm (11-50 attorneys)</option>
+            <option value="large">Large Firm (50+ attorneys)</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:flex;align-items:center;gap:8px;font-weight:400;">
+            <input type="checkbox" id="manualClientValueToggle" style="width:18px;height:18px;vertical-align:middle;">
+            Use Custom Client/Case Value
+          </label>
+          <input type="number" id="manualClientValue" placeholder="Enter client/case value" min="1" style="display:none;margin-top:10px;">
+          <span id="customValueNote" style="display:none;font-size:0.9em;color:#dfa449;">ROI will use your custom value</span>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label for="domainAuthority" style="font-weight:400;">Firm Website Domain Authority <span style="font-size:0.9em;color:#dfa449;" title="Domain Authority (DA) is a 0-100 score of your site's search engine strength (Moz). Higher is better.">[?]</span></label>
+          <input type="number" id="domainAuthority" placeholder="e.g., 25" min="1" max="100" style="width:120px;">
+          <!-- Removed daCompare and daMessage spans; this functionality moved to Benchmark card -->
+        </div>
+        <div class="form-group">
+          <label>Annual Pricing</label>
+          <div class="price-inputs">
+            <input type="number" id="year1" placeholder="Year 1 Price" min="0" step="100">
+            <input type="number" id="year2" placeholder="Year 2 Price" min="0" step="100">
+            <input type="number" id="year3" placeholder="Year 3 Price" min="0" step="100">
+          </div>
+        </div>
+      </div>
+      <!-- Results Section -->
+      <div class="results-section">
+        <h2>Investment Analysis</h2>
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="result-label">Total 3-Year Investment</div>
+            <div class="result-value" id="totalCost">$0</div>
+          </div>
+          <div class="result-card">
+            <div class="result-label">ROI Impact Per Client</div>
+            <div class="result-value" id="breakEven">--</div>
+            <div class="roi-breakdown" id="roiBreakdown"></div>
+          </div>
+          <div class="result-card">
+            <div class="result-label" id="firstClientLabel">Investment Focus</div>
+            <div class="result-value" id="firstClientROI">Strategic Value</div>
+          </div>
+          <div class="result-card" id="clientValueCard">
+            <div class="result-label">Value Per Client</div>
+            <div class="result-value" id="clientValue">$0</div>
+          </div>
+        </div>
+      </div>
+      <!-- Industry Insights Section -->
+      <div class="insights-section">
+        <h2>Industry Insights</h2>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-icon">
+              <!-- icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <path d="M9 17V7M15 17V10M21 12H3"></path>
+              </svg>
+            </div>
+            <div class="insight-title">Search Behavior</div>
+            <div class="statistic">96%</div>
+            <div class="insight-description">
+              of people seeking legal advice use a search engine as their first step
+            </div>
+            <div class="source">Source: American Bar Association</div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">
+              <!-- icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <div class="insight-title">Domain Authority Impact</div>
+            <div class="statistic">81 vs 30</div>
+            <div class="insight-description">
+              Best Lawyers domain authority compared to average law firm website
+            </div>
+            <div class="source">Backlinks: 916,000+</div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">
+              <!-- icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                <polygon points="12 2 15 9 23 9 17 14 20 21 12 16 4 21 7 14 1 9 9 9"></polygon>
+              </svg>
+            </div>
+            <div class="insight-title">Trust & Reviews</div>
+            <div class="statistic">80%</div>
+            <div class="insight-description">
+              of consumers trust online directories as much as personal referrals
+            </div>
+            <div class="source">Source: Nielsen Research</div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">
+              <!-- icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+                <path d="M12 18h.01"></path>
+              </svg>
+            </div>
+            <div class="insight-title">Mobile First</div>
+            <div class="statistic">76%</div>
+            <div class="insight-description">
+              of people who search locally on smartphones visit a business within 24 hours
+            </div>
+            <div class="source">Source: Think with Google</div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">
+              <!-- icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </div>
+            <div class="insight-title">Third-Party Credibility</div>
+            <div class="statistic">65%</div>
+            <div class="insight-description">
+              give more credence to third-party content than a firm's own website
+            </div>
+            <div class="source">Source: Demand Gen Report</div>
+          </div>
+          <!-- New insight: Tier efficiency (Smithy AI, etc.) -->
+          <div class="insight-card" id="tierInsightCard" style="display:none;">
+            <div class="insight-icon">
+              <!-- icon (clock to represent time saved) -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="#dfa449" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+            </div>
+            <div class="insight-title">Efficiency Gains</div>
+            <div class="statistic" id="tierBenefitStat">5+ hrs</div>
+            <div class="insight-description" id="tierBenefitDesc">
+              saved monthly on profile management with AI assistance
+            </div>
+            <div class="source">Source: Best Lawyers® Smithy AI</div>
+          </div>
+        </div>
+      </div>
+      <!-- Performance Benchmarks Section -->
+      <div class="benchmark-section" id="benchmarkSection">
+        <h2>Performance Benchmarks</h2>
+        <div class="benchmark-grid">
+          <div class="benchmark-card" id="roiBenchmarkCard">
+            <div class="benchmark-label">Projected 3-Year ROI</div>
+            <div class="benchmark-value" id="threeYearROIValue">0%</div>
+            <div class="benchmark-label" id="roiComparisonLabel">Benchmark: 5:1 (500%)</div>
+            <div class="source">Source: Comrade Digital (2025)</div>
+          </div>
+          <div class="benchmark-card" id="industryAvgCard">
+            <div class="benchmark-label">Industry Avg ROI<br><span style="font-weight:400">(for <span id="practiceNameLabel"></span>)</span></div>
+            <div class="benchmark-value" id="industryAvg">0%</div>
+            <div class="benchmark-label">Typical Marketing Return</div>
+            <div class="source">Source: Clio Legal Trends</div>
+          </div>
+          <!-- Domain Authority Comparison Card -->
+          <div class="benchmark-card" id="daBenchmarkCard" style="display:none;">
+            <div class="benchmark-label" style="margin-bottom:8px;">
+              Domain Authority Comparison
+            </div>
+            <div class="benchmark-value" style="font-size:2rem;" id="daCompareValue">--</div>
+            <div class="benchmark-label" id="daMessageText" style="white-space:normal; line-height:1.3; margin-top:8px;">
+              Boosting SEO via Best Lawyers can far exceed your current visibility.
+            </div>
+            <div class="source">Source: Moz & Best Lawyers</div>
+          </div>
+          <!-- (Optional) Marketing Efficiency Card removed, integrated into text elsewhere -->
+        </div>
+      </div>
+      <!-- ROI Timeline Chart Section -->
+      <div class="chart-container" id="chartContainer">
+        <h2>ROI Timeline Visualization</h2>
+        <canvas id="roiChart"></canvas>
+      </div>
+      <!-- 3-Year Growth Projections Section -->
+      <div class="projection-section">
+        <h2>3-Year Growth Projections</h2>
+        <div class="info-box" id="projectionInfo">
+          Based on acquiring <span id="clientsPerYearText">1</span> new client per year through Best Lawyers recognition. Adjusts with tier selection.
+        </div>
+        <div class="projection-grid">
+          <div class="projection-card">
+            <div class="label">Revenue Generated</div>
+            <div class="value" id="projectedRevenue3">$0</div>
+            <div class="roi-indicator" id="revenueIndicator">Calculate to see</div>
+          </div>
+          <div class="projection-card">
+            <div class="label">Total Investment</div>
+            <div class="value" id="projectedInvestment3">$0</div>
+          </div>
+          <div class="projection-card">
+            <div class="label" id="netValueLabel">Net Value</div>
+            <div class="value" id="projectedProfit3">$0</div>
+          </div>
+          <div class="projection-card">
+            <div class="label">3-Year ROI</div>
+            <div class="value" id="threeYearROI">0%</div>
+            <div class="roi-indicator" id="roiIndicator">Calculate to see</div>
+          </div>
+        </div>
+      </div>
+      <!-- PDF Download Button -->
+      <button id="downloadPdfBtn">Download PDF</button>
+    </div>
+  </div>
+
+  <script>
+    // Practice area data with benchmarks (updated with verified values)
+    const practiceData = {
+      personal_injury: { avgCaseValue: 55056, attorneyFeePercent: 0.33, costPerCase: 2700, avgROI: 2.5, name: 'Personal Injury' },
+      criminal:        { avgCaseValue: 8000,  attorneyFeePercent: 1.0,  costPerCase: 1200, avgROI: 1.8, name: 'Criminal Defense' },
+      family:          { avgCaseValue: 7500,  attorneyFeePercent: 1.0,  costPerCase: 1000, avgROI: 2.0, name: 'Family Law' },
+      bankruptcy:      { avgCaseValue: 4000,  attorneyFeePercent: 1.0,  costPerCase: 800,  avgROI: 1.5, name: 'Bankruptcy' },
+      estate:          { avgCaseValue: 10000, attorneyFeePercent: 1.0,  costPerCase: 400,  avgROI: 3.5, name: 'Estate Planning' },
+      business:        { avgCaseValue: 25000, attorneyFeePercent: 1.0,  costPerCase: 2500, avgROI: 3.2, name: 'Business/Corporate Law' },
+      real_estate:     { avgCaseValue: 15000, attorneyFeePercent: 1.0,  costPerCase: 1200, avgROI: 3.0, name: 'Real Estate Law' },
+      employment:      { avgCaseValue: 18000, attorneyFeePercent: 1.0,  costPerCase: 1500, avgROI: 2.8, name: 'Employment Law' },
+      intellectual_property: { avgCaseValue: 30000, attorneyFeePercent: 1.0, costPerCase: 3000, avgROI: 3.8, name: 'Intellectual Property' },
+      immigration:     { avgCaseValue: 5000,  attorneyFeePercent: 1.0,  costPerCase: 600,  avgROI: 2.2, name: 'Immigration Law' },
+      insurance:       { avgCaseValue: 12000, attorneyFeePercent: 1.0,  costPerCase: 850,  avgROI: 3.0, name: 'Insurance Defense' },
+      workers_comp:    { avgCaseValue: 8500,  attorneyFeePercent: 1.0,  costPerCase: 700,  avgROI: 2.4, name: 'Workers\' Compensation' },
+      litigation:      { avgCaseValue: 20000, attorneyFeePercent: 1.0,  costPerCase: 1500, avgROI: 2.8, name: 'General Litigation' },
+      tax:             { avgCaseValue: 12000, attorneyFeePercent: 1.0,  costPerCase: 850,  avgROI: 3.2, name: 'Tax Law' },
+      environmental:   { avgCaseValue: 22000, attorneyFeePercent: 1.0,  costPerCase: 2000, avgROI: 3.0, name: 'Environmental Law' },
+      healthcare:      { avgCaseValue: 28000, attorneyFeePercent: 1.0,  costPerCase: 2200, avgROI: 3.5, name: 'Healthcare Law' },
+      construction:    { avgCaseValue: 35000, attorneyFeePercent: 1.0,  costPerCase: 2800, avgROI: 3.3, name: 'Construction Law' },
+      elder:           { avgCaseValue: 7500,  attorneyFeePercent: 1.0,  costPerCase: 600,  avgROI: 2.6, name: 'Elder Law' },
+      education:       { avgCaseValue: 9000,  attorneyFeePercent: 1.0,  costPerCase: 800,  avgROI: 2.3, name: 'Education Law' },
+      general:         { avgCaseValue: 7000,  attorneyFeePercent: 1.0,  costPerCase: 700,  avgROI: 2.2, name: 'General Practice' }
+    };
+
+    let chartInstance = null;
+    let usingCustomClientValue = false;
+
+    // Handle custom client value toggle
+    const manualClientValueToggle = document.getElementById('manualClientValueToggle');
+    const manualClientValueInput = document.getElementById('manualClientValue');
+    const customValueNote = document.getElementById('customValueNote');
+    manualClientValueToggle.addEventListener('change', function() {
+      usingCustomClientValue = this.checked;
+      manualClientValueInput.style.display = this.checked ? 'block' : 'none';
+      customValueNote.style.display = this.checked ? 'inline' : 'none';
+      calculateROI();
+    });
+    manualClientValueInput.addEventListener('input', calculateROI);
+
+    // Tier selection toggle
+    const tierSelect = document.getElementById('tier');
+    tierSelect.addEventListener('change', function() {
+      // Update any tier-specific messaging
+      const tier = this.value;
+      const tierInsight = document.getElementById('tierInsightCard');
+      const benefitStat = document.getElementById('tierBenefitStat');
+      const benefitDesc = document.getElementById('tierBenefitDesc');
+      const clientsPerYearText = document.getElementById('clientsPerYearText');
+      if (tier === 'visibility') {
+        tierInsight.style.display = 'none';
+        clientsPerYearText.textContent = '1';
+      } else if (tier === 'business') {
+        tierInsight.style.display = 'none';
+        clientsPerYearText.textContent = '1-2';
+      } else if (tier === 'market') {
+        // Show Smithy AI benefit for top tier
+        tierInsight.style.display = 'block';
+        benefitStat.textContent = '5+ hrs';
+        benefitDesc.textContent = 'saved monthly via Smithy AI (content automation)';
+        clientsPerYearText.textContent = '2';
+      }
+      calculateROI();
+    });
+
+    // Domain Authority Input/Logic integrated into calculateROI
+    const daInput = document.getElementById('domainAuthority');
+    daInput.addEventListener('input', calculateROI);
+
+    // Auto-calculate year 2 and 3 prices with 10% annual increase for convenience
+    document.getElementById('year1').addEventListener('input', function() {
+      const year1Value = parseFloat(this.value) || 0;
+      if (year1Value > 0) {
+        document.getElementById('year2').value = Math.round(year1Value * 1.1);
+        document.getElementById('year3').value = Math.round(year1Value * 1.21);
+      } else {
+        document.getElementById('year2').value = '';
+        document.getElementById('year3').value = '';
+      }
+      calculateROI();
+    });
+    document.getElementById('year2').addEventListener('input', calculateROI);
+    document.getElementById('year3').addEventListener('input', calculateROI);
+
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(amount);
+    }
+    function formatPercent(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'percent',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function calculateROI() {
+      const practiceKey = document.getElementById('practice').value;
+      const tier = document.getElementById('tier').value;
+      const year1 = parseFloat(document.getElementById('year1').value) || 0;
+      const year2 = parseFloat(document.getElementById('year2').value) || 0;
+      const year3 = parseFloat(document.getElementById('year3').value) || 0;
+      const totalCost = year1 + year2 + year3;
+      const da = parseFloat(daInput.value);
+
+      // Update Domain Authority benchmark card
+      const daCard = document.getElementById('daBenchmarkCard');
+      const daCompareVal = document.getElementById('daCompareValue');
+      const daMsgText = document.getElementById('daMessageText');
+      if (da > 0) {
+        daCard.style.display = 'block';
+        daCompareVal.textContent = `${da} vs 81`;
+        if (da < 50) {
+          daMsgText.textContent = "Boosting your SEO through Best Lawyers profiles can outperform your current visibility.";
+        } else {
+          daMsgText.textContent = "Your site's authority is strong—Best Lawyers can further extend it.";
+        }
+      } else {
+        daCard.style.display = 'none';
+      }
+
+      if (totalCost === 0) {
+        resetResults();
+        return;
+      }
+
+      // Determine client value per case
+      let attorneyFeePerCase;
+      if (usingCustomClientValue) {
+        const val = parseFloat(manualClientValueInput.value) || 0;
+        attorneyFeePerCase = val;
+      } else {
+        const practiceInfo = practiceData[practiceKey];
+        attorneyFeePerCase = practiceInfo.avgCaseValue * practiceInfo.attorneyFeePercent;
+      }
+
+      // Calculate how many clients needed to break even
+      const clientsToBreakEven = attorneyFeePerCase > 0 ? Math.ceil(totalCost / attorneyFeePerCase) : 0;
+
+      // Adjust projections based on tier:
+      let clientsPerYear = 1;
+      if (tier === 'business') {
+        // Slight boost: assume 1.5 clients/year average
+        clientsPerYear = 1.2; 
+      } else if (tier === 'market') {
+        // Higher tier, assume up to 2 clients/year
+        clientsPerYear = 2;
+      }
+
+      // ROI impact breakdown per client scenario
+      const roiImpact = calculateROIImpact(totalCost, attorneyFeePerCase, clientsToBreakEven);
+      // 3-year totals (with tier adjustment on revenue)
+      const threeYearRevenue = clientsPerYear * attorneyFeePerCase * 3;
+      const threeYearInvestment = totalCost;
+      const threeYearProfit = threeYearRevenue - threeYearInvestment;
+      const threeYearROI = threeYearInvestment > 0 ? threeYearProfit / threeYearInvestment : 0;
+
+      // Update Investment Analysis cards
+      document.getElementById('totalCost').textContent = formatCurrency(totalCost);
+      document.getElementById('breakEven').innerHTML = roiImpact.mainDisplay;
+      document.getElementById('roiBreakdown').innerHTML = roiImpact.breakdown;
+      document.getElementById('clientValue').textContent = formatCurrency(attorneyFeePerCase);
+      const firstClientLabel = document.getElementById('firstClientLabel');
+      const firstClientROIElement = document.getElementById('firstClientROI');
+      if (clientsToBreakEven <= 1) {
+        firstClientLabel.textContent = 'Immediate ROI';
+        firstClientROIElement.textContent = 'Profitable Day 1';
+      } else if (clientsToBreakEven === 2) {
+        firstClientLabel.textContent = 'Quick Returns';
+        firstClientROIElement.textContent = 'Within 2 Clients';
+      } else if (clientsToBreakEven === 3) {
+        firstClientLabel.textContent = 'Strategic Investment';
+        firstClientROIElement.textContent = 'Building Pipeline';
+      } else {
+        firstClientLabel.textContent = 'Long-Term Strategy';
+        firstClientROIElement.textContent = 'Brand Building';
+      }
+
+      // Update 3-Year Projections
+      document.getElementById('projectedRevenue3').textContent = formatCurrency(threeYearRevenue);
+      document.getElementById('projectedInvestment3').textContent = formatCurrency(threeYearInvestment);
+      if (threeYearProfit < 0) {
+        document.getElementById('projectedProfit3').textContent = formatCurrency(Math.abs(threeYearProfit));
+        document.querySelector('#projectedProfit3').parentElement.querySelector('.label').textContent = 'Building Value';
+      } else {
+        document.getElementById('projectedProfit3').textContent = formatCurrency(threeYearProfit);
+        document.querySelector('#projectedProfit3').parentElement.querySelector('.label').textContent = 'Net Profit';
+      }
+      document.getElementById('threeYearROI').textContent = threeYearROI < 0 ? 'Building' : formatPercent(threeYearROI);
+
+      updateROIIndicators(clientsToBreakEven, threeYearROI);
+      const practiceInfo = practiceData[practiceKey];
+      updateBenchmarks(threeYearROI, practiceInfo);
+      updateROIChart(threeYearInvestment, attorneyFeePerCase, clientsPerYear);
+    }
+
+    function calculateROIImpact(totalCost, clientValue, breakEven) {
+      const roi1 = totalCost > 0 ? ((clientValue - totalCost) / totalCost * 100).toFixed(0) : 0;
+      const roi2 = totalCost > 0 ? (((clientValue * 2) - totalCost) / totalCost * 100).toFixed(0) : 0;
+      const roi3 = totalCost > 0 ? (((clientValue * 3) - totalCost) / totalCost * 100).toFixed(0) : 0;
+      let mainDisplay = '';
+      let breakdown = '';
+      if (breakEven <= 1) {
+        mainDisplay = `${Math.abs(roi1)}%+`;
+        breakdown = `Each client generates<br>immediate profit`;
+      } else if (breakEven === 2) {
+        mainDisplay = `${breakEven} to break even`;
+        breakdown = `Client 1: covers investment<br>Client 2+: ${roi2}% ROI`;
+      } else if (breakEven === 3) {
+        mainDisplay = `${breakEven} to profit`;
+        breakdown = `Pipeline building<br>Client 3+: ${roi3}% ROI`;
+      } else {
+        mainDisplay = `${breakEven} client pipeline`;
+        breakdown = `Long-term growth focus<br>${roi3}% ROI by client ${breakEven}`;
+      }
+      return { mainDisplay, breakdown };
+    }
+
+    function updateROIIndicators(breakEven, threeROI) {
+      const revenueIndicator = document.getElementById('revenueIndicator');
+      const roiIndicator = document.getElementById('roiIndicator');
+      revenueIndicator.className = 'roi-indicator';
+      roiIndicator.className = 'roi-indicator';
+      if (breakEven <= 1) {
+        revenueIndicator.classList.add('roi-excellent');
+        revenueIndicator.textContent = 'Immediate Returns';
+        roiIndicator.classList.add('roi-excellent');
+        roiIndicator.textContent = 'Outstanding ROI';
+      } else if (breakEven <= 2) {
+        revenueIndicator.classList.add('roi-good');
+        revenueIndicator.textContent = 'Fast Returns';
+        roiIndicator.classList.add('roi-good');
+        roiIndicator.textContent = 'Strong ROI';
+      } else if (threeROI >= 0.5) {
+        // ROI >= 50% (0.5) which is above benchmark break-even
+        revenueIndicator.classList.add('roi-good');
+        revenueIndicator.textContent = 'Steady Returns';
+        roiIndicator.classList.add('roi-good');
+        roiIndicator.textContent = 'Solid Potential';
+      } else {
+        revenueIndicator.classList.add('roi-building');
+        revenueIndicator.textContent = 'Building Stage';
+        roiIndicator.classList.add('roi-building');
+        roiIndicator.textContent = 'Strategic Value';
+      }
+    }
+
+    function updateBenchmarks(threeYearROI, practiceInfo) {
+      const benchmarkSection = document.getElementById('benchmarkSection');
+      benchmarkSection.style.display = 'block';
+      // Industry average ROI (as a fraction, e.g., 2.5 meaning 250%)
+      const industryAvgROI = practiceInfo.avgROI;
+      // Display industry avg ROI as percentage
+      document.getElementById('practiceNameLabel').textContent = practiceInfo.name;
+      document.getElementById('industryAvg').textContent = formatPercent(industryAvgROI);
+      // Projected ROI vs benchmark (5:1 or 500%)
+      const roiPercent = threeYearROI * 100;
+      document.getElementById('threeYearROIValue').textContent = (threeYearROI < 0 ? '0%' : Math.round(roiPercent) + '%');
+      // Adjust label if ROI surpasses or falls short of benchmark
+      const roiCompLabel = document.getElementById('roiComparisonLabel');
+      if (threeYearROI >= 5.0) {
+        roiCompLabel.textContent = 'Exceeds 5:1 Benchmark';
+      } else if (threeYearROI >= 1.0) {
+        roiCompLabel.textContent = 'Approaches 5:1 Benchmark';
+      } else {
+        roiCompLabel.textContent = 'Below 5:1 Benchmark';
+      }
+    }
+
+    function updateROIChart(totalCost, clientValue, clientsPerYear) {
+      const chartContainer = document.getElementById('chartContainer');
+      chartContainer.style.display = 'block';
+      const ctx = document.getElementById('roiChart').getContext('2d');
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      // Calculate yearly data (0 through 3 years)
+      const years = [0, 1, 2, 3];
+      const investment = years.map(y => (y / 3) * totalCost);
+      const revenue = years.map(y => y * clientValue * clientsPerYear);
+      const profit = years.map((year, index) => revenue[index] - investment[index]);
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: years.map(y => `Year ${y}`),
+          datasets: [
+            {
+              label: 'Cumulative Revenue',
+              data: revenue,
+              borderColor: '#28a745',
+              backgroundColor: 'rgba(40, 167, 69, 0.1)',
+              borderWidth: 3,
+              tension: 0.4
+            },
+            {
+              label: 'Investment',
+              data: investment,
+              borderColor: '#c7061f',
+              backgroundColor: 'rgba(199, 6, 31, 0.1)',
+              borderWidth: 3,
+              tension: 0.4
+            },
+            {
+              label: 'Net Value',
+              data: profit.map(p => Math.abs(p)),
+              borderColor: '#dfa449',
+              backgroundColor: 'rgba(223, 164, 73, 0.1)',
+              borderWidth: 3,
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, position: 'bottom' },
+            title: { 
+              display: true, 
+              text: 'Investment Timeline & Growth Potential',
+              font: { size: 14 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { callback: v => '$' + v.toLocaleString() }
+            }
+          }
+        }
+      });
+    }
+
+    function resetResults() {
+      document.getElementById('totalCost').textContent = '$0';
+      document.getElementById('breakEven').textContent = '--';
+      document.getElementById('roiBreakdown').textContent = '';
+      document.getElementById('firstClientROI').textContent = 'Strategic Value';
+      document.getElementById('firstClientLabel').textContent = 'Investment Focus';
+      document.getElementById('clientValue').textContent = '$0';
+      document.getElementById('projectedRevenue3').textContent = '$0';
+      document.getElementById('projectedInvestment3').textContent = '$0';
+      document.getElementById('projectedProfit3').textContent = '$0';
+      document.getElementById('threeYearROI').textContent = '0%';
+      document.getElementById('revenueIndicator').textContent = 'Calculate to see';
+      document.getElementById('roiIndicator').textContent = 'Calculate to see';
+      document.getElementById('benchmarkSection').style.display = 'none';
+      document.getElementById('chartContainer').style.display = 'none';
+    }
+
+    // Event listeners for inputs that trigger recalculation
+    document.getElementById('practice').addEventListener('change', calculateROI);
+    document.getElementById('firmSize').addEventListener('change', calculateROI);
+
+    // Initial calculation on page load
+    calculateROI();
+
+    // PDF Export functionality
+    const pdfButton = document.getElementById('downloadPdfBtn');
+    pdfButton.addEventListener('click', () => {
+      // Disable the button to avoid multiple clicks
+      pdfButton.disabled = true;
+      html2canvas(document.getElementById('calculator-content'), { scale: 2 }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          unit: 'pt',
+          format: 'a4',
+          orientation: 'p'
         });
-        manualClientValueInput.addEventListener('input', calculateROI);
-        // Domain Authority Input/Logic
-        const daInput = document.getElementById('domainAuthority');
-        const daCompare = document.getElementById('daCompare');
-        const daMessage = document.getElementById('daMessage');
-        daInput.addEventListener('input', function() {
-            calculateROI();
-        });
-        // Auto-calculate year 2 and 3 with 10% increases
-        document.getElementById('year1').addEventListener('input', function() {
-            const year1Value = parseFloat(this.value) || 0;
-            if (year1Value > 0) {
-                document.getElementById('year2').value = Math.round(year1Value * 1.1);
-                document.getElementById('year3').value = Math.round(year1Value * 1.21);
-            } else {
-                document.getElementById('year2').value = '';
-                document.getElementById('year3').value = '';
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        // Calculate scaled height to maintain aspect ratio
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const canvasWidthInPdf = imgWidth * ratio;
+        const canvasHeightInPdf = imgHeight * ratio;
+        if (canvasHeightInPdf <= pdfHeight) {
+          // One page
+          pdf.addImage(imgData, 'PNG', 0, 0, canvasWidthInPdf, canvasHeightInPdf);
+        } else {
+          // Multi-page: split vertically
+          let remainingHeight = canvasHeightInPdf;
+          let positionY = 0;
+          let page = 0;
+          while (remainingHeight > 0) {
+            page++;
+            const pageCanvasHeight = Math.min(remainingHeight, pdfHeight);
+            pdf.addImage(
+              imgData,
+              'PNG',
+              0,
+              0,
+              canvasWidthInPdf,
+              canvasHeightInPdf,
+              undefined,
+              'FAST',
+              0,
+              positionY * (imgHeight / canvasHeightInPdf)  // crop start in original image proportionally
+            );
+            remainingHeight -= pdfHeight;
+            positionY += pdfHeight;
+            if (remainingHeight > 0) {
+              pdf.addPage();
             }
-            calculateROI();
-        });
-        document.getElementById('year2').addEventListener('input', calculateROI);
-        document.getElementById('year3').addEventListener('input', calculateROI);
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
+          }
         }
-        function formatPercent(value) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'percent',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(value);
-        }
-        function calculateROI() {
-            const practice = document.getElementById('practice').value;
-            const year1 = parseFloat(document.getElementById('year1').value) || 0;
-            const year2 = parseFloat(document.getElementById('year2').value) || 0;
-            const year3 = parseFloat(document.getElementById('year3').value) || 0;
-            const totalCost = year1 + year2 + year3;
-            const da = parseFloat(daInput.value);
-            if (da > 0) {
-                daCompare.textContent = `(Your DA: ${da} vs Best Lawyers DA: 81)`;
-                if (da < 50) {
-                    daMessage.textContent = "Boosting your SEO through Best Lawyers profiles can outperform your current visibility.";
-                } else {
-                    daMessage.textContent = "";
-                }
-            } else {
-                daCompare.textContent = "";
-                daMessage.textContent = "";
-            }
-            if (totalCost === 0) {
-                resetResults();
-                return;
-            }
-            let attorneyFeePerCase;
-            if (usingCustomClientValue) {
-                const val = parseFloat(manualClientValueInput.value) || 0;
-                attorneyFeePerCase = val;
-            } else {
-                const practiceInfo = practiceData[practice];
-                attorneyFeePerCase = practiceInfo.avgCaseValue * practiceInfo.attorneyFeePercent;
-            }
-            const clientsToBreakEven = attorneyFeePerCase > 0 ? Math.ceil(totalCost / attorneyFeePerCase) : 0;
-            const roiImpact = calculateROIImpact(totalCost, attorneyFeePerCase, clientsToBreakEven);
-            const threeYearRevenue = 3 * attorneyFeePerCase;
-            const threeYearInvestment = totalCost;
-            const threeYearProfit = threeYearRevenue - threeYearInvestment;
-            const threeYearROI = threeYearInvestment > 0 ? threeYearProfit / threeYearInvestment : 0;
-            document.getElementById('totalCost').textContent = formatCurrency(totalCost);
-            document.getElementById('breakEven').innerHTML = roiImpact.mainDisplay;
-            document.getElementById('roiBreakdown').innerHTML = roiImpact.breakdown;
-            document.getElementById('clientValue').textContent = formatCurrency(attorneyFeePerCase);
-            const firstClientLabel = document.getElementById('firstClientLabel');
-            const firstClientROIElement = document.getElementById('firstClientROI');
-            if (clientsToBreakEven <= 1) {
-                firstClientLabel.textContent = 'Immediate ROI';
-                firstClientROIElement.textContent = 'Profitable Day 1';
-            } else if (clientsToBreakEven <= 2) {
-                firstClientLabel.textContent = 'Quick Returns';
-                firstClientROIElement.textContent = 'Within 2 Clients';
-            } else if (clientsToBreakEven <= 3) {
-                firstClientLabel.textContent = 'Strategic Investment';
-                firstClientROIElement.textContent = 'Building Pipeline';
-            } else {
-                firstClientLabel.textContent = 'Long-term Strategy';
-                firstClientROIElement.textContent = 'Brand Building';
-            }
-            document.getElementById('projectedRevenue3').textContent = formatCurrency(threeYearRevenue);
-            document.getElementById('projectedInvestment3').textContent = formatCurrency(threeYearInvestment);
-            if (threeYearProfit < 0) {
-                document.getElementById('projectedProfit3').textContent = formatCurrency(Math.abs(threeYearProfit));
-                document.querySelector('#projectedProfit3').parentElement.querySelector('.label').textContent = 'Building Value';
-            } else {
-                document.getElementById('projectedProfit3').textContent = formatCurrency(threeYearProfit);
-                document.querySelector('#projectedProfit3').parentElement.querySelector('.label').textContent = 'Net Profit';
-            }
-            if (threeYearROI < 0) {
-                document.getElementById('threeYearROI').textContent = 'Building';
-            } else {
-                document.getElementById('threeYearROI').textContent = formatPercent(threeYearROI);
-            }
-            updateROIIndicators(clientsToBreakEven, threeYearROI);
-            const practiceInfo = practiceData[practice];
-            updateBenchmarks(threeYearROI, practiceInfo);
-            updateROIChart(threeYearInvestment, attorneyFeePerCase);
-        }
-        function calculateROIImpact(totalCost, clientValue, breakEven) {
-            const roi1 = ((clientValue - totalCost) / totalCost * 100).toFixed(0);
-            const roi2 = (((clientValue * 2) - totalCost) / totalCost * 100).toFixed(0);
-            const roi3 = (((clientValue * 3) - totalCost) / totalCost * 100).toFixed(0);
-            let mainDisplay = '';
-            let breakdown = '';
-            if (breakEven <= 1) {
-                mainDisplay = `${Math.abs(roi1)}%+`;
-                breakdown = `Each client generates<br>immediate profit`;
-            } else if (breakEven === 2) {
-                mainDisplay = `${breakEven} to break even`;
-                breakdown = `Client 1: Investment recovery<br>Client 2+: ${roi2}% ROI`;
-            } else if (breakEven === 3) {
-                mainDisplay = `${breakEven} to profit`;
-                breakdown = `Building pipeline<br>Client 3+: ${roi3}% ROI`;
-            } else {
-                mainDisplay = `${breakEven} client pipeline`;
-                breakdown = `Strategic brand investment<br>Long-term growth focus`;
-            }
-            return { mainDisplay, breakdown };
-        }
-        function updateROIIndicators(breakEven, threeROI) {
-            const revenueIndicator = document.getElementById('revenueIndicator');
-            const roiIndicator = document.getElementById('roiIndicator');
-            revenueIndicator.className = 'roi-indicator';
-            roiIndicator.className = 'roi-indicator';
-            if (breakEven <= 1) {
-                revenueIndicator.classList.add('roi-excellent');
-                revenueIndicator.textContent = 'Immediate Returns';
-            } else if (breakEven <= 2) {
-                revenueIndicator.classList.add('roi-good');
-                revenueIndicator.textContent = 'Quick Returns';
-            } else {
-                revenueIndicator.classList.add('roi-building');
-                revenueIndicator.textContent = 'Building Value';
-            }
-            if (threeROI > 2) {
-                roiIndicator.classList.add('roi-excellent');
-                roiIndicator.textContent = 'Excellent Growth';
-            } else if (threeROI > 0) {
-                roiIndicator.classList.add('roi-good');
-                roiIndicator.textContent = 'Strong Potential';
-            } else {
-                roiIndicator.classList.add('roi-building');
-                roiIndicator.textContent = 'Strategic Value';
-            }
-        }
-        function updateBenchmarks(threeYearROI, practiceInfo) {
-            const benchmarkSection = document.getElementById('benchmarkSection');
-            benchmarkSection.style.display = 'block';
-            const industryAvgROI = practiceInfo.avgROI;
-            const roiPerformance = Math.min(95, Math.max(25,
-                50 + ((Math.max(0, threeYearROI) - industryAvgROI) / industryAvgROI) * 50
-            ));
-            const ppcCost = practiceInfo.costPerCase;
-            const blCostPerClient = (document.getElementById('year1').value || 0) / 1;
-            const efficiency = Math.max(1.5, ppcCost / blCostPerClient);
-            document.getElementById('roiBenchmark').textContent = Math.round(roiPerformance) + '%';
-            document.getElementById('industryAvg').textContent = formatPercent(industryAvgROI);
-            document.getElementById('efficiency').textContent = efficiency.toFixed(1) + 'x';
-        }
-        function updateROIChart(totalCost, clientValue) {
-            const chartContainer = document.getElementById('chartContainer');
-            chartContainer.style.display = 'block';
-            const ctx = document.getElementById('roiChart').getContext('2d');
-            if (chartInstance) chartInstance.destroy();
-            const years = [0, 1, 2, 3];
-            const investment = years.map(y => (y / 3) * totalCost);
-            const revenue = years.map(y => y * clientValue);
-            const profit = years.map((year, index) => revenue[index] - investment[index]);
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: years.map(y => `Year ${y}`),
-                    datasets: [
-                        {
-                            label: 'Cumulative Revenue',
-                            data: revenue,
-                            borderColor: '#28a745',
-                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Investment',
-                            data: investment,
-                            borderColor: '#c7061f',
-                            backgroundColor: 'rgba(199, 6, 31, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Net Value',
-                            data: profit.map(p => Math.abs(p)),
-                            borderColor: '#dfa449',
-                            backgroundColor: 'rgba(223, 164, 73, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true, position: 'bottom' },
-                        title: { display: true, text: 'Investment Timeline & Growth Potential' }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: v => '$' + v.toLocaleString() }
-                        }
-                    }
-                }
-            });
-        }
-        function resetResults() {
-            document.getElementById('totalCost').textContent = '$0';
-            document.getElementById('breakEven').textContent = '--';
-            document.getElementById('roiBreakdown').textContent = '';
-            document.getElementById('firstClientROI').textContent = 'Strategic Value';
-            document.getElementById('firstClientLabel').textContent = 'Investment Focus';
-            document.getElementById('clientValue').textContent = '$0';
-            document.getElementById('projectedRevenue3').textContent = '$0';
-            document.getElementById('projectedInvestment3').textContent = '$0';
-            document.getElementById('projectedProfit3').textContent = '$0';
-            document.getElementById('threeYearROI').textContent = '0%';
-            document.getElementById('revenueIndicator').textContent = 'Calculate to see';
-            document.getElementById('roiIndicator').textContent = 'Calculate to see';
-            document.getElementById('benchmarkSection').style.display = 'none';
-            document.getElementById('chartContainer').style.display = 'none';
-        }
-        document.getElementById('practice').addEventListener('change', calculateROI);
-        document.getElementById('firmSize').addEventListener('change', calculateROI);
-        calculateROI();
-    </script>
+        pdf.save('BestLawyers_ROI_Calculator.pdf');
+        pdfButton.disabled = false;
+      }).catch(err => {
+        console.error('PDF generation error:', err);
+        pdfButton.disabled = false;
+      });
+    });
+  </script>
 </body>
 </html>
